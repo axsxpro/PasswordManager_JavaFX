@@ -1,4 +1,4 @@
-package org.example.ex_application_bureau;
+package org.example.ex_application_bureau.Controller;
 
 
 import javafx.event.ActionEvent;
@@ -14,8 +14,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import org.example.ex_application_bureau.Controller.ListPasswordController;
 
 
 public class passwordManagerController {
@@ -74,7 +73,7 @@ public class passwordManagerController {
         emailText_pm.setText(email);
 
 
-        // Affichage des fonctionnalités lors de l'ouvertuge de la fenètre password Manager
+        // Affichage des fonctionnalités lors de l'ouverture de la fenètre password Manager
         usernameText_pm.setVisible(true);
         passwordText_pm.setVisible(true);
 
@@ -108,69 +107,6 @@ public class passwordManagerController {
 
     }
 
-
-    //methode qui supprime les données dans le fichier TXT
-    public void deleteDataInFile() {
-
-        // Stockage des valeurs du fichier "file" dans un tableau
-        List<String> tableValues = new ArrayList<>();
-
-        try {
-            // Chemin du fichier
-            File fileSavedPassword = new File("src/main/resources/savedPassword.txt");
-
-            // Vérifier si le fichier existe
-            if (!fileSavedPassword.exists()) {
-                System.out.println("File doesn't exist.");
-                return;
-            }
-
-
-            // Créer un objet BufferedReader pour lire le fichier
-            BufferedReader reader = new BufferedReader(new FileReader(fileSavedPassword));
-
-            String valueId;
-
-            while ((valueId = reader.readLine()) != null) {
-
-                if (!valueId.equals(usernameText_pm.getText()) && !valueId.equals(passwordText_pm.getText()) && !valueId.equals(urlText_pm.getText())) {
-                    // Ajoute les valeurs dans le tableau uniquement si elles ne correspondent pas
-                    tableValues.add(valueId);
-
-                } else {
-
-                    System.out.println("Value deleted");
-                }
-            }
-
-            // Fermer le BufferedReader
-            reader.close();
-
-            // Écrire les lignes restantes dans le fichier
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileSavedPassword))) {
-                for (String value : tableValues) {
-                    writer.write(value);
-                    writer.newLine();
-
-                }
-            }
-
-            label_pm.setText("username and password deleted");
-
-            modify_button.setVisible(false);
-            delete_button.setVisible(false);
-            usernameText_pm.setVisible(false);
-            passwordText_pm.setVisible(false);
-            username_pm.setVisible(false);
-            password_pm.setVisible(false);
-            urlText_pm.setVisible(false);
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
 
 
     //Methode qui supprime les données dans le fichier JSON
@@ -247,88 +183,10 @@ public class passwordManagerController {
     }
 
 
-    // methode qui permet la mAJ dans le fichier TXT
-    private void saveDataFunction() {
-
-
-        // Stockage des valeurs du fichier "file" dans un tableau
-        List<String> tableValues = new ArrayList<>();
-
-        try {
-            // Chemin du fichier
-            File fileSavedPassword = new File("src/main/resources/savedPassword.txt");
-
-            // Vérifier si le fichier existe
-            if (!fileSavedPassword.exists()) {
-                System.out.println("File doesn't exist.");
-                return;
-            }
-
-
-            // Créer un objet BufferedReader pour lire le fichier
-            BufferedReader reader = new BufferedReader(new FileReader(fileSavedPassword));
-
-            String valueId;
-
-
-            // Lire les valeurs du fichier
-            while ((valueId = reader.readLine()) != null) {
-
-                //Dans cette condition on va lire les valeurs du fichier une par une !
-
-                // si une valeur du fichier est égal à l'username et le champs de username contient une valeur (cad n'est pas vide)
-                if (valueId.equals(usernameText_pm.getText()) && !usernameField_pm.getText().isBlank()) {
-
-                    // Remplacer le nom d'utilisateur si modifié
-                    tableValues.add(usernameField_pm.getText());
-
-                    //appel de la fonction pour affichage des valeurs dans les labels
-                    collectId(usernameField_pm.getText(), passwordText_pm.getText(), urlText_pm.getText(), emailText_pm.getText());
-
-                } else if (valueId.equals(passwordText_pm.getText()) && !passwordField_pm.getText().isBlank()) {
-
-                    String password = passwordField_pm.getText();
-
-                    //Hasher le mot de passe avec BCrypt
-                    String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-
-                    tableValues.add(hashedPassword);
-
-                    //appel de la fonction pour affichage des valeurs dans les labels
-                    collectId(usernameText_pm.getText(), hashedPassword, urlText_pm.getText(), emailText_pm.getText());
-
-                } else {
-
-                    // si un username ou un mot de passe n'est pas changé alors on garde l'ancienne valeur
-                    tableValues.add(valueId);
-                }
-            }
-
-
-            // Fermer le BufferedReader
-            reader.close();
-
-            // Écrire les lignes restantes dans le fichier
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileSavedPassword))) {
-                for (String value : tableValues) {
-                    writer.write(value);
-                    writer.newLine();
-
-                }
-            }
-
-        } catch (IOException e) {
-
-            e.printStackTrace();
-        }
-
-    }
-
-
 
     //Methode qui permet la MAJ dans le fichier JSON
     @FXML
-    public void saveDataFunctionInJsonFile() {
+    public void updateDataInJsonFile() {
 
         // Stockage des valeurs du fichier "file" dans un tableau
         JSONArray dataJsonArray = new JSONArray();
@@ -369,6 +227,7 @@ public class passwordManagerController {
 
 
                     if (!passwordField_pm.getText().isBlank() && !usernameField_pm.getText().isBlank()) {
+
                         // Remplacer le username actuel par le nouveau username dans le champs username
                         jsonObject.put("username", usernameField_pm.getText());
 
@@ -452,11 +311,9 @@ public class passwordManagerController {
             // Remettre le texte du label d'alerte à une chaîne vide
             label_pm.setText("");
 
-            //appel de la fonction permettant de mettre à jour son password ou son username
-            //saveDataFunction();
 
             //appel de la fonction permettant de mettre à jour son password ou son username dans le fichier JSON
-            saveDataFunctionInJsonFile();
+            updateDataInJsonFile();
 
             // Lors du click sur le bouton save on active ou on désactive certaines fonctionnalités
             //false

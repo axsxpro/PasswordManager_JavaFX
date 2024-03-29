@@ -1,8 +1,7 @@
-package org.example.ex_application_bureau;
+package org.example.ex_application_bureau.Controller;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,12 +10,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import javafx.stage.Stage;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -56,6 +53,7 @@ public class LoginController {
     private ListPasswordController listPasswordController; //  instance de la classe ListPasswordController, utilisée pour stocker le contrôleur de la fenêtre ListPassword
 
 
+    //bouton reset
     public void resetLogin(ActionEvent event) {
 
         // Réinitialiser les champs du formulaire
@@ -68,6 +66,8 @@ public class LoginController {
     }
 
 
+
+    //bouton login
     public void login(ActionEvent event) {
 
         if ((username_text.getText().isBlank() || password_text.getText().isBlank()) || url_text.getText().isBlank() || email_text.getText().isBlank()) {
@@ -77,6 +77,8 @@ public class LoginController {
         } else {
 
             label_login.setText("You are logged");
+
+            saveUserInArray();
 
             openListPassword();
 
