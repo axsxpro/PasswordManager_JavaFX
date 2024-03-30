@@ -66,8 +66,6 @@ public class passwordManagerController {
 
 
 
-
-
     //methode qui permet d'ouvrir la fenetre pour éditer l'email ou le mot de passe
     @FXML
     public void openPasswordManager(String username, String hashedPassword, String url, String email) {

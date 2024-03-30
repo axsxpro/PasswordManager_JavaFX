@@ -1,8 +1,6 @@
 package org.example.ex_application_bureau.Controller;
 
-import org.example.ex_application_bureau.Model.DAOFactory;
-import org.example.ex_application_bureau.Model.PasswordManager;
-import org.example.ex_application_bureau.Model.UserDAO;
+import org.example.ex_application_bureau.Model.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,10 +14,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import javafx.stage.Stage;
-import org.example.ex_application_bureau.Model.User;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 
 public class LoginController {
@@ -54,15 +50,19 @@ public class LoginController {
 
     private List<Map<String, String>> arrayUsers = new ArrayList<>();
 
-    private ListPasswordController listPasswordController; //  instance de la classe ListPasswordController, utilisée pour stocker le contrôleur de la fenêtre ListPassword
-
     private UserDAO userDAO;
-    private PasswordManager passwordManagerDAO;
+    private PasswordManagerDAO passwordManagerDAO;
+
+    private User currentUser;
+
+    private ListPasswordController listPasswordController;
+
+
 
     public LoginController() throws SQLException {
 
         this.userDAO = (UserDAO) DAOFactory.getUserDAO(); // cast qui indique que l'objet retourné par DAOFactory.getUserDAO() doit être traité comme un objet de type UserDAO.
-        this.passwordManagerDAO = (PasswordManager) DAOFactory.getPasswordManagerDAO();
+        this.passwordManagerDAO = (PasswordManagerDAO) DAOFactory.getPasswordManagerDAO();
     }
 
 
@@ -88,6 +88,8 @@ public class LoginController {
 
         if (user != null && user.getPassword().equals(password_text.getText())) {
 
+            currentUser = user;// Stocker l'utilisateur connecté
+
             label_login.setText("Login successful");
 
             openListPassword(); // Redirection vers la page suivante
@@ -96,25 +98,54 @@ public class LoginController {
 
             label_login.setText("Invalid email or password");
         }
-}
+    }
 
 
+    // Méthode pour afficher les mots de passe associés à l'utilisateur connecté
+    private void searchIdentifiantByUser() throws SQLException {
+
+        if (currentUser != null) {
+
+            Map<Integer, PasswordManager> identifiants = passwordManagerDAO.findByIdUser(currentUser.getIdUser());
+
+            // Ajouter les mots de passe au tableau
+            for (PasswordManager identifiant: identifiants.values()) {
+
+                listPasswordController.collectIdForListPassword(
+
+                        identifiant.getIdPasswordManager(),
+                        identifiant.getUsername(),
+                        identifiant.getPassword(),
+                        identifiant.getUrl(),
+                        identifiant.getIdUser()
+                );
+            }
+
+        } else {
+
+            System.err.println("No user logged in");
+        }
+
+    }
 
 
-
-    // methode qui permet d'ouvrir la liste des mots de passe enregistres
+    // methode qui permet d'ouvrir la fenetre contenant la liste des mots de passe enregistres
     @FXML
     private void openListPassword() {
 
         try {
 
             // récupère l'URL du fichier FXML en fonction du chemin relatif spécifié
-            FXMLLoader listPasswordFXML = new FXMLLoader(getClass().getResource("listPassword.fxml"));
+            FXMLLoader listPasswordFXML = new FXMLLoader(getClass().getResource("/org/example/ex_application_bureau/View/listPassword.fxml"));
             //loader.load() charge le fichier FXML
             Parent root = listPasswordFXML.load();
 
             // Création d'une scène avec la racine (Root), et spécification des dimensions
             Scene scene = new Scene(root, 600, 400);
+
+            // Récupérer le contrôleur de la deuxième fenêtre et le stocker dans une variable pour le réutiliser dans une autre méthode
+            // permet d'initialiser l'attribut 'listPasswordController'
+            listPasswordController = listPasswordFXML.getController();
 
             Stage primaryStage = new Stage();
 
@@ -127,26 +158,14 @@ public class LoginController {
             // Affichage de la fenêtre principale
             primaryStage.show();
 
+            //appel de la methode pour charger la liste
+            searchIdentifiantByUser();
 
         } catch (Exception e) {
 
             e.printStackTrace();
         }
 
-    }
-
-
-    // Méthode pour afficher les mots de passe associés à l'utilisateur connecté
-    private void searchIdentifiantByUser() throws SQLException {
-
-
-        Map<Integer, PasswordManager> passwords = passwordManagerDAO.findByUserId(user.getId());
-
-        // Ajouter les mots de passe au tableau
-        for (PasswordManager password : passwords.values()) {
-
-            listPasswordController.collectIdForListPassword(username, password, url, email);
-        }
     }
 
 

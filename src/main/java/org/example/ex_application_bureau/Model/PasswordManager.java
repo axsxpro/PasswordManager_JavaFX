@@ -49,10 +49,10 @@ public class PasswordManager {
         this.url = url;
     }
 
-    public User getUser() {
+    public User getIdUser() {
         return idUser;
     }
-    public void setUrl(User idUser) {
+    public void setIdUser(User idUser) {
         this.idUser = idUser;
     }
 

@@ -26,7 +26,7 @@ public class DAOFactory {
 
     public static GenericDAO<PasswordManager> getPasswordManagerDAO() throws SQLException {
 
-        return new passwordManagerDAO(storedProcedure);
+        return new PasswordManagerDAO(storedProcedure);
 
     }
 

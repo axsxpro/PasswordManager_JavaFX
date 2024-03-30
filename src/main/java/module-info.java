@@ -8,7 +8,10 @@ module org.example.ex_application_bureau {
     requires json;
     requires java.sql;
 
-    opens org.example.ex_application_bureau to javafx.fxml;
+    opens org.example.ex_application_bureau.Controller to javafx.fxml;
+    opens org.example.ex_application_bureau.View to javafx.fxml;
     exports org.example.ex_application_bureau;
+    exports org.example.ex_application_bureau.Controller;
+    opens org.example.ex_application_bureau.Model to javafx.base;
 
 }

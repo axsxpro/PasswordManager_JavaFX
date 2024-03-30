@@ -28,7 +28,7 @@ public class UserDAO implements GenericDAO<User> {
 
         try {
 
-            ResultSet resultStoredProcedure = StoredProcedure.procedureFindById("{call findOneByUser(?)}", id);
+            ResultSet resultStoredProcedure = StoredProcedure.procedureFindById("{call findOneUserById(?)}", id);
 
             while (resultStoredProcedure.next()) {
 

@@ -27,9 +27,10 @@ public class StoredProcedure {
     }
 
 
-    public ResultSet procedureFindByIdUser(String callProcedureSQL, User user) throws SQLException {
+    public ResultSet procedureFindByIdUser(String callProcedureSQL, int idUser) throws SQLException {
 
         CallableStatement callableStatement = connection.prepareCall(callProcedureSQL);
+        callableStatement.setInt(1, idUser);
 
         return callableStatement.executeQuery();
     }

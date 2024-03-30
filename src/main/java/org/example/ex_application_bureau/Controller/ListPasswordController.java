@@ -54,16 +54,16 @@ public class ListPasswordController implements Initializable {
         password_column.setCellValueFactory(new PropertyValueFactory<PasswordManager, String>("password"));
         url_column.setCellValueFactory(new PropertyValueFactory<PasswordManager, String>("url"));
 
-        selectCellInTableView();
+        //selectCellInTableView();
 
     }
 
 
     //collecter les données pour afficher dans le tableau des mots de passe
-    public void collectIdForListPassword(String username, String password, String url, User idUser) {
+    public void collectIdForListPassword(int idPasswordManager, String username, String password, String url, User idUser) {
 
         //ajout des valeurs dans les colonnes
-        arrayListPassword.add(new PasswordManager(username, password, url, idUser));
+        arrayListPassword.add(new PasswordManager(idPasswordManager, username, password, url, idUser));
 
         // Mettre à jour le TableView
         tableView.setItems(arrayListPassword);
@@ -74,42 +74,42 @@ public class ListPasswordController implements Initializable {
     }
 
 
-    public void selectCellInTableView() {
-
-        tableView.setOnMouseClicked(event -> {
-
-            if (event.getClickCount() == 2) { // si il y a un double click
-
-                // La valeur renvoyée par getSelectedItem() est stockée dans la variable selectedUser, qui est de type Users.
-                PasswordManager selectedUser = tableView.getSelectionModel().getSelectedItem();
-
-                if (selectedUser != null) {
-
-                    // Récupérer les informations de la cellule
-                    String username = selectedUser.getUsername();
-                    String password = selectedUser.getPassword();
-                    String url = selectedUser.getUrl();
-
-                    // récupère l'URL du fichier FXML en fonction du chemin relatif spécifié
-                    FXMLLoader loginFXML = new FXMLLoader(getClass().getResource("login.fxml"));
-
-                    //loader.load() charge le fichier FXML
-                    try {
-                        Parent root = loginFXML.load();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                    // Récupérer le contrôleur de la deuxième fenêtre
-                    PasswordManager controller = loginFXML.getController();
-
-                    // Ouvrir une nouvelle fenêtre avec les informations de la cellule
-                    controller.openPasswordManager(username, password, url, email_text.getText());
-                }
-            }
-        });
-
-    }
+//    public void selectCellInTableView() {
+//
+//        tableView.setOnMouseClicked(event -> {
+//
+//            if (event.getClickCount() == 2) { // si il y a un double click
+//
+//                // La valeur renvoyée par getSelectedItem() est stockée dans la variable selectedUser, qui est de type User.
+//                PasswordManager selectedUser = tableView.getSelectionModel().getSelectedItem();
+//
+//                if (selectedUser != null) {
+//
+//                    // Récupérer les informations de la cellule
+//                    String username = selectedUser.getUsername();
+//                    String password = selectedUser.getPassword();
+//                    String url = selectedUser.getUrl();
+//
+//                    // récupère l'URL du fichier FXML en fonction du chemin relatif spécifié
+//                    FXMLLoader  passwordManagerFXML = new FXMLLoader(getClass().getResource("passwordManager.fxml"));
+//
+//                    //loader.load() charge le fichier FXML
+//                    try {
+//                        Parent root = passwordManagerFXML.load();
+//                    } catch (IOException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//
+//                    // Récupérer le contrôleur de la deuxième fenêtre
+//                    PasswordManager controller = passwordManagerFXML.getController();
+//
+//                    // Ouvrir une nouvelle fenêtre avec les informations de la cellule
+//                    controller.openPasswordManager(username, password, url, email_text.getText());
+//                }
+//            }
+//        });
+//
+//    }
 
 
     @FXML
