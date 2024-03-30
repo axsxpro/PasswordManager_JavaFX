@@ -1,29 +1,36 @@
 package org.example.ex_application_bureau.Model;
 
-public class passwordManager {
+public class PasswordManager {
 
+    private int idPasswordManager;
     private String username;
     private String password;
     private String url;
-    private User user;
+    private User idUser;
 
 
     // Constructeur
-    public passwordManager(String username, String password, String url, User user) {
+    public PasswordManager(int idPasswordManager, String username, String password, String url, User idUser) {
 
+        this.idPasswordManager = idPasswordManager;
         this.username = username;
         this.password = password;
         this.url = url;
-        this.user = user;
+        this.idUser = idUser;
 
     }
 
     // Getters et Setters
-    public String getUsername() {
-
-        return username;
+    public int getIdPasswordManager() {
+        return idPasswordManager;
+    }
+    public void setIdPasswordManager(int idPasswordManager) {
+        this.idPasswordManager = idPasswordManager;
     }
 
+    public String getUsername() {
+        return username;
+    }
     public void setUsername(String username) {
         this.username = username;
     }
@@ -31,21 +38,22 @@ public class passwordManager {
     public String getPassword() {
         return password;
     }
-
     public void setPassword(String password) {
         this.password = password;
     }
+
     public String getUrl() {
         return url;
     }
     public void setUrl(String url) {
         this.url = url;
     }
+
     public User getUser() {
-        return user;
+        return idUser;
     }
-    public void setUrl(User user) {
-        this.user = user;
+    public void setUrl(User idUser) {
+        this.idUser = idUser;
     }
 
 }

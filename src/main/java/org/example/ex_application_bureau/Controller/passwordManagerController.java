@@ -3,10 +3,14 @@ package org.example.ex_application_bureau.Controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.mindrot.jbcrypt.BCrypt;
@@ -61,6 +65,48 @@ public class passwordManagerController {
     private ListPasswordController listPasswordController;
 
 
+
+
+
+    //methode qui permet d'ouvrir la fenetre pour éditer l'email ou le mot de passe
+    @FXML
+    public void openPasswordManager(String username, String hashedPassword, String url, String email) {
+        try {
+
+            // récupère l'URL du fichier FXML en fonction du chemin relatif spécifié
+            FXMLLoader passwordManagerFXML = new FXMLLoader(getClass().getResource("passwordManager.fxml"));
+            //loader.load() charge le fichier FXML
+            Parent root = passwordManagerFXML.load();
+
+            // Récupérer le contrôleur de la deuxième fenêtre
+            passwordManagerController controller = passwordManagerFXML.getController();
+
+            // Afficher les valeurs dans la deuxième fenêtre, apelle de la methode "collectId" dans le controller "passwordManagerFXML"
+            controller.collectId(username, hashedPassword, url, email);
+
+            // Création d'une scène avec la racine (Root), et spécification des dimensions
+            Scene scene = new Scene(root, 600, 400);
+
+            Stage primaryStage = new Stage();
+
+            // Configuration de la scène sur la fenêtre principale (primaryStage)
+            primaryStage.setScene(scene);
+
+            //Définition du titre de la fenêtre principale
+            primaryStage.setTitle("Password Manager");
+
+            // Affichage de la fenêtre principale
+            primaryStage.show();
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+    }
+
+
+
     public void collectId(String username, String password, String url, String email) {
 
         // Afficher la valeur dans le label
@@ -109,190 +155,12 @@ public class passwordManagerController {
 
 
 
-    //Methode qui supprime les données dans le fichier JSON
-    public void deleteDataInJsonFile() {
-
-        JSONArray dataJsonArray = new JSONArray();
-
-        try {
-            // Chemin du fichier JSON
-            File fileSavedPassword = new File("src/main/resources/savedPassword.json");
-
-            // Vérifier si le fichier existe
-            if (!fileSavedPassword.exists()) {
-                System.out.println("File doesn't exist.");
-                return;
-            }
-
-            // Lire le contenu actuel du fichier JSON
-            String jsonFileContent = new String(Files.readAllBytes(Paths.get(fileSavedPassword.getAbsolutePath())));
-
-            // Parser le contenu JSON existant
-            if (!jsonFileContent.isEmpty()) {
-                dataJsonArray = new JSONArray(jsonFileContent);
-            }
-
-            // Identifier l'objet à supprimer en fonction des critères
-            for (int i = 0; i < dataJsonArray.length(); i++) {
-                JSONObject jsonObject = dataJsonArray.getJSONObject(i);
-                String username = jsonObject.getString("username");
-                String password = jsonObject.getString("password");
-                String url = jsonObject.getString("url");
-
-                if (urlText_pm.getText().equals(url) && usernameText_pm.getText().equals(username) && passwordText_pm.getText().equals(password)) {
-
-                    // Supprimer l'objet trouvé
-                    dataJsonArray.remove(i);
-                    System.out.println("Value deleted");
-                    break;
-
-                } else {
-
-                    System.out.println("Value not found to delete in file JSON");
-                }
-            }
-
-            // Écrire le contenu mis à jour dans le fichier JSON
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileSavedPassword))) {
-                writer.write(dataJsonArray.toString(2)); // Le paramètre 2 pour l'indentation
-            }
-
-            label_pm.setText("Username and password deleted");
-
-            modify_button.setVisible(false);
-            delete_button.setVisible(false);
-            usernameText_pm.setVisible(false);
-            passwordText_pm.setVisible(false);
-            username_pm.setVisible(false);
-            password_pm.setVisible(false);
-            urlText_pm.setVisible(false);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
     //methode qui actionne le bouton delete
     @FXML
     public void deleteId(ActionEvent event) {
 
 
-        deleteDataInJsonFile();
 
-    }
-
-
-
-    //Methode qui permet la MAJ dans le fichier JSON
-    @FXML
-    public void updateDataInJsonFile() {
-
-        // Stockage des valeurs du fichier "file" dans un tableau
-        JSONArray dataJsonArray = new JSONArray();
-
-
-        try {
-
-            // Chemin du fichier
-            File fileSavedPassword = new File("src/main/resources/savedPassword.json");
-
-            // Vérifier si le fichier existe
-            if (!fileSavedPassword.exists()) {
-                System.out.println("File doesn't exist.");
-                return;
-            }
-
-            // Lire le contenu actuel du fichier JSON
-            String jsonFileContent = new String(Files.readAllBytes(Paths.get(fileSavedPassword.getAbsolutePath())));
-
-            // Parser le contenu JSON existant
-            if (!jsonFileContent.isEmpty()) {
-
-                dataJsonArray = new JSONArray(jsonFileContent);
-            }
-
-
-
-            // Parcourir le tableau JSON
-            for (int i = 0; i < dataJsonArray.length(); i++) {
-
-                JSONObject jsonObject = dataJsonArray.getJSONObject(i);
-                String username = jsonObject.getString("username");
-                String password = jsonObject.getString("password");
-                String url = jsonObject.getString("url");
-                String email = jsonObject.getString("email");
-
-                if (urlText_pm.getText().equals(url) && emailText_pm.getText().equals(email)) {
-
-
-                    if (!passwordField_pm.getText().isBlank() && !usernameField_pm.getText().isBlank()) {
-
-                        // Remplacer le username actuel par le nouveau username dans le champs username
-                        jsonObject.put("username", usernameField_pm.getText());
-
-                        // Hashe le mdp
-                        String newPassword = passwordField_pm.getText();
-                        String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
-
-                        // Remplacer le password actuel par le nouveau password
-                        jsonObject.put("password", hashedPassword);
-
-                        //apelle de la methode collectId pour mettre à jour l'interface
-                        collectId(usernameField_pm.getText(), hashedPassword, url, emailText_pm.getText());
-
-
-                        // Appeler la méthode updateTableView du contrôleur ListPasswordController
-                        //listPasswordController.updateTableView(username, password, url);
-
-                    }
-
-
-                    // Mettre à jour le username si le champ n'est pas vide et correspond au username actuel
-                    if (!usernameField_pm.getText().isBlank() && passwordField_pm.getText().isBlank()) {
-
-                        // Remplacer le username actuel par le nouveau username dans le champs username
-                        jsonObject.put("username", usernameField_pm.getText());
-
-                        //apelle de la methode collectId pour mettre à jour l'interface
-                        collectId(usernameField_pm.getText(), password, url, emailText_pm.getText());
-
-
-                        //listPasswordController.updateTableView(usernameField_pm.getText(), password, url);
-
-                    }
-
-                    // Mettre à jour le password si le champ n'est pas vide et correspond au password actuel
-                    if (!passwordField_pm.getText().isBlank() && usernameField_pm.getText().isBlank()) {
-
-                        // Hashe le mdp
-                        String newPassword = passwordField_pm.getText();
-                        String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
-
-                        // Remplacer le password actuel par le nouveau password
-                        jsonObject.put("password", hashedPassword);
-
-                        //apelle de la methode collectId pour mettre à jour l'interface
-                        collectId(username, hashedPassword, url, emailText_pm.getText());
-
-
-                       // listPasswordController.updateTableView(username, hashedPassword, url);
-
-                    }
-
-                    }
-                }
-
-
-            // Écrire le contenu mis à jour dans le fichier
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileSavedPassword))) {
-                writer.write(dataJsonArray.toString(2)); // Le paramètre 2 pour l'indentation
-            }
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
 
@@ -311,9 +179,6 @@ public class passwordManagerController {
             // Remettre le texte du label d'alerte à une chaîne vide
             label_pm.setText("");
 
-
-            //appel de la fonction permettant de mettre à jour son password ou son username dans le fichier JSON
-            updateDataInJsonFile();
 
             // Lors du click sur le bouton save on active ou on désactive certaines fonctionnalités
             //false

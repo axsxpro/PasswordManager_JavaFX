@@ -13,7 +13,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import org.example.ex_application_bureau.Model.passwordManager;
+import org.example.ex_application_bureau.Model.PasswordManager;
+import org.example.ex_application_bureau.Model.User;
 
 import java.io.*;
 import java.net.URL;
@@ -23,16 +24,16 @@ import java.util.ResourceBundle;
 public class ListPasswordController implements Initializable {
 
     @FXML
-    private TableView<passwordManager> tableView;
+    private TableView<PasswordManager> tableView;
 
     @FXML
-    private TableColumn<passwordManager, String> password_column;
+    private TableColumn<PasswordManager, String> password_column;
 
     @FXML
-    private TableColumn<passwordManager, String> url_column;
+    private TableColumn<PasswordManager, String> url_column;
 
     @FXML
-    private TableColumn<passwordManager, String> username_column;
+    private TableColumn<PasswordManager, String> username_column;
 
     @FXML
     private Button refresh_button;
@@ -40,7 +41,7 @@ public class ListPasswordController implements Initializable {
     @FXML
     private Label email_text;
 
-    private ObservableList<passwordManager> arrayListPassword;
+    private ObservableList<PasswordManager> arrayListPassword;
 
 
     //la méthode initialize est utilisée pour configurer le tableView
@@ -49,25 +50,26 @@ public class ListPasswordController implements Initializable {
 
         arrayListPassword = FXCollections.observableArrayList();
 
-        username_column.setCellValueFactory(new PropertyValueFactory<passwordManager, String>("username"));
-        password_column.setCellValueFactory(new PropertyValueFactory<passwordManager, String>("password"));
-        url_column.setCellValueFactory(new PropertyValueFactory<passwordManager, String>("url"));
+        username_column.setCellValueFactory(new PropertyValueFactory<PasswordManager, String>("username"));
+        password_column.setCellValueFactory(new PropertyValueFactory<PasswordManager, String>("password"));
+        url_column.setCellValueFactory(new PropertyValueFactory<PasswordManager, String>("url"));
 
         selectCellInTableView();
 
     }
 
 
-    public void collectIdForListPassword(String username, String password, String url, String email) {
+    //collecter les données pour afficher dans le tableau des mots de passe
+    public void collectIdForListPassword(String username, String password, String url, User idUser) {
 
-//        //ajout des valeurs dans les colonnes
-//        arrayListPassword.add(new passwordManager(username, password, url));
-//
-//        // Mettre à jour le TableView
-//        tableView.setItems(arrayListPassword);
-//
-//        //ajout de l'email dans le label
-//        email_text.setText(email);
+        //ajout des valeurs dans les colonnes
+        arrayListPassword.add(new PasswordManager(username, password, url, idUser));
+
+        // Mettre à jour le TableView
+        tableView.setItems(arrayListPassword);
+
+        //ajout de l'email dans le label
+        //email_text.setText();
 
     }
 
@@ -79,7 +81,7 @@ public class ListPasswordController implements Initializable {
             if (event.getClickCount() == 2) { // si il y a un double click
 
                 // La valeur renvoyée par getSelectedItem() est stockée dans la variable selectedUser, qui est de type Users.
-                passwordManager selectedUser = tableView.getSelectionModel().getSelectedItem();
+                PasswordManager selectedUser = tableView.getSelectionModel().getSelectedItem();
 
                 if (selectedUser != null) {
 
@@ -99,7 +101,7 @@ public class ListPasswordController implements Initializable {
                     }
 
                     // Récupérer le contrôleur de la deuxième fenêtre
-                    LoginController controller = loginFXML.getController();
+                    PasswordManager controller = loginFXML.getController();
 
                     // Ouvrir une nouvelle fenêtre avec les informations de la cellule
                     controller.openPasswordManager(username, password, url, email_text.getText());
@@ -117,9 +119,9 @@ public class ListPasswordController implements Initializable {
 
         System.out.println(arrayListPassword.toString());
 
-        ObservableList<passwordManager> currentTableData = tableView.getItems();
+        ObservableList<PasswordManager> currentTableData = tableView.getItems();
 
-        for (passwordManager user : currentTableData) {
+        for (PasswordManager user : currentTableData) {
 
             if (user.getUrl().equals(url)) {
                 // Mise à jour des propriétés de l'objet existant au lieu de créer un nouvel objet
@@ -139,11 +141,11 @@ public class ListPasswordController implements Initializable {
     @FXML
     private void refreshTableView(ActionEvent event) {
 
-        ObservableList<passwordManager> currentTableData = tableView.getItems();
+        ObservableList<PasswordManager> currentTableData = tableView.getItems();
 
         System.out.println("Data in Table View:");
 
-        for (passwordManager user : currentTableData) {
+        for (PasswordManager user : currentTableData) {
             System.out.println("Username: " + user.getUsername() + ", Password: " + user.getPassword() + ", URL: " + user.getUrl());
 
             if (user.getUrl().equals("https://hi.fr")) {

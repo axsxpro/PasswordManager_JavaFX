@@ -1,7 +1,8 @@
 package org.example.ex_application_bureau.Controller;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import org.example.ex_application_bureau.Model.DAOFactory;
+import org.example.ex_application_bureau.Model.PasswordManager;
+import org.example.ex_application_bureau.Model.UserDAO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,12 +11,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import java.io.*;
+
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javafx.stage.Stage;
-import org.mindrot.jbcrypt.BCrypt;
+import org.example.ex_application_bureau.Model.User;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 
 public class LoginController {
@@ -52,166 +56,53 @@ public class LoginController {
 
     private ListPasswordController listPasswordController; //  instance de la classe ListPasswordController, utilisée pour stocker le contrôleur de la fenêtre ListPassword
 
+    private UserDAO userDAO;
+    private PasswordManager passwordManagerDAO;
 
-    //bouton reset
-    public void resetLogin(ActionEvent event) {
+    public LoginController() throws SQLException {
 
-        // Réinitialiser les champs du formulaire
-        email_text.clear();
-        username_text.clear();
-        password_text.clear();
-        label_login.setText("");
-        url_text.setText("https://"); //va remettre le champs pré-écrit
-
+        this.userDAO = (UserDAO) DAOFactory.getUserDAO(); // cast qui indique que l'objet retourné par DAOFactory.getUserDAO() doit être traité comme un objet de type UserDAO.
+        this.passwordManagerDAO = (PasswordManager) DAOFactory.getPasswordManagerDAO();
     }
 
 
-
-    //bouton login
+    //bouton login qui va enclencher l'évenement
     public void login(ActionEvent event) {
 
-        if ((username_text.getText().isBlank() || password_text.getText().isBlank()) || url_text.getText().isBlank() || email_text.getText().isBlank()) {
+        if ((password_text.getText().isBlank()) || email_text.getText().isBlank()) {
 
             label_login.setText("Field cannot be blank");
 
         } else {
 
-            label_login.setText("You are logged");
-
-            saveUserInArray();
-
-            openListPassword();
-
+            checkUserExistence();
         }
 
     }
 
 
-    private JSONArray saveUserInArray() {
+    // methode qui vérifie si un utilisateur existe dans la base de donnée
+    public void checkUserExistence() {
 
-        JSONArray jsonArray = null;
+        User user = userDAO.findUserByEmail(email_text.getText());
 
-        try {
+        if (user != null && user.getPassword().equals(password_text.getText())) {
 
-            // Récupérer la valeur de l'id password
-            String password = password_text.getText();
-            // Récupérer la valeur de l'id username
-            String username = username_text.getText();
-            // Récupérer la valeur de l'id url
-            String url = url_text.getText();
-            // Récupérer la valeur de l'id email
-            String email = email_text.getText();
+            label_login.setText("Login successful");
 
-            // Hasher le mot de passe avec BCrypt
-            String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+            openListPassword(); // Redirection vers la page suivante
 
-            // Créer un tableau associatif "tableValues" pour enregistrer les informations d'utilisateur
-            // <String, String>: va contenir le type de la clé et le type de sa valeur
-            Map<String, String> tableValues = Map.of("username", username, "password", hashedPassword, "url", url, "email", email);
+        } else {
 
-
-            /* RECUPERATION DU CONTENU EXISTANT DU FICHIER savedPassword.json */
-
-            // Créer un objet File pour représenter le fichier json + indication de la route ou se trouve le fichier
-            File JsonFile = new File("src/main/resources/savedPassword.json");
-
-            // Vérifier si le fichier Json existe déjà afin d'éviter de recréer un tableau principal, le but est de ré-écrire à la suite
-            if (JsonFile.exists()) {
-
-                // Lire le contenu actuel du fichier Json
-                BufferedReader readJsonFile = new BufferedReader(new FileReader(JsonFile));
-
-                // StringBuilder est utilisé pour construire une seule chaîne de caractères à partir des lignes lues avec BufferedReader.
-                StringBuilder jsonFileContent = new StringBuilder();
-                String line;
-
-                // grace au Bufferedreader je lis chaque ligne de mon JsonFile
-                while ((line = readJsonFile.readLine()) != null) {
-
-                    //chaque ligne sera ajouté dans mon nouveau contenu jsonFile
-                    jsonFileContent.append(line);
-                }
-                readJsonFile.close();
-
-
-                // Création du tableau JSON
-                if (jsonFileContent.isEmpty()) {
-
-                    // Si le fichier est vide, commencez un nouveau tableau JSON
-                    jsonArray = new JSONArray();
-
-                } else {
-
-                    // Sinon, utilisez le contenu existant comme tableau JSON
-                    /* REECRITURE DU CONTENU EXISTANT DU FICHIER savedPassword.json AVEC NOUVELLES DONNEES */
-                    // Parser le contenu JSON existant
-
-                /* le processus de "parsing" permet de prendre une représentation textuelle des données
-                (comme une chaîne JSON) et de la transformer en une structure de données que le programme peut
-                comprendre et manipuler (comme un objet JSONArray dans ce cas).
-                 */
-                    jsonArray = new JSONArray(jsonFileContent.toString());
-
-                }
-
-                // Ajouter le nouvel utilisateur au tableau existant
-                jsonArray.put(new JSONObject(tableValues));
-
-                // Écrire le contenu mis à jour dans le fichier
-                BufferedWriter writer = new BufferedWriter(new FileWriter(JsonFile));
-
-                writer.write(jsonArray.toString(2)); // Le paramètre 2 pour l'indentation
-
-                writer.close();
-
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            label_login.setText("Invalid email or password");
         }
-
-        return jsonArray;
-    }
+}
 
 
-    @FXML
-    public void openPasswordManager(String username, String hashedPassword, String url, String email) {
-        try {
-
-            // récupère l'URL du fichier FXML en fonction du chemin relatif spécifié
-            FXMLLoader passwordManagerFXML = new FXMLLoader(getClass().getResource("passwordManager.fxml"));
-            //loader.load() charge le fichier FXML
-            Parent root = passwordManagerFXML.load();
-
-            // Récupérer le contrôleur de la deuxième fenêtre
-            passwordManagerController controller = passwordManagerFXML.getController();
-
-            // Afficher les valeurs dans la deuxième fenêtre, apelle de la methode "collectId" dans le controller "passwordManagerFXML"
-            controller.collectId(username, hashedPassword, url, email);
-
-            // Création d'une scène avec la racine (Root), et spécification des dimensions
-            Scene scene = new Scene(root, 600, 400);
-
-            Stage primaryStage = new Stage();
-
-            // Configuration de la scène sur la fenêtre principale (primaryStage)
-            primaryStage.setScene(scene);
-
-            //Définition du titre de la fenêtre principale
-            primaryStage.setTitle("Password Manager");
-
-            // Affichage de la fenêtre principale
-            primaryStage.show();
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-        }
-
-    }
 
 
-    // methode qui permet d'ouvrir la liste des utilisateurs
+
+    // methode qui permet d'ouvrir la liste des mots de passe enregistres
     @FXML
     private void openListPassword() {
 
@@ -221,9 +112,6 @@ public class LoginController {
             FXMLLoader listPasswordFXML = new FXMLLoader(getClass().getResource("listPassword.fxml"));
             //loader.load() charge le fichier FXML
             Parent root = listPasswordFXML.load();
-
-            // Récupérer le contrôleur de la deuxième fenêtre et le stocker dans une variable pour le réutiliser dans une autre méthode
-            listPasswordController = listPasswordFXML.getController();
 
             // Création d'une scène avec la racine (Root), et spécification des dimensions
             Scene scene = new Scene(root, 600, 400);
@@ -239,9 +127,6 @@ public class LoginController {
             // Affichage de la fenêtre principale
             primaryStage.show();
 
-            //lire le fichier Json poour afficher les données dans la listPassword
-            readUsersFromJsonFile();
-
 
         } catch (Exception e) {
 
@@ -251,36 +136,33 @@ public class LoginController {
     }
 
 
-    public void readUsersFromJsonFile() {
-
-        try {
-
-            // stockage du tableau JSON dans une variable , on stock la méthode 'saveUserInArray'
-            JSONArray usersJsonArray = saveUserInArray();
-
-            for (int i = 0; i < usersJsonArray.length(); i++) {
-
-                // récupération des tableaux associatifs cad les objets qu'on a précédement convertit en JSON
-                JSONObject jsonObject = usersJsonArray.getJSONObject(i);
-                //récupération des clés
-                String username = jsonObject.getString("username");
-                String password = jsonObject.getString("password");
-                String url = jsonObject.getString("url");
-                String email = jsonObject.getString("email");
+    // Méthode pour afficher les mots de passe associés à l'utilisateur connecté
+    private void searchIdentifiantByUser() throws SQLException {
 
 
-                // Ajouter uniquement les utilisateurs avec le nom d'utilisateur correspondant
-                if (email_text.getText().equals(email)) {
+        Map<Integer, PasswordManager> passwords = passwordManagerDAO.findByUserId(user.getId());
 
-                    //appel du controleur dans ListPasswordController
-                    listPasswordController.collectIdForListPassword(username, password, url, email);
-                }
-            }
+        // Ajouter les mots de passe au tableau
+        for (PasswordManager password : passwords.values()) {
 
-        } catch (Exception e) {
-            e.printStackTrace();
+            listPasswordController.collectIdForListPassword(username, password, url, email);
         }
     }
+
+
+    //bouton reset
+    public void resetLogin(ActionEvent event) {
+
+        // Réinitialiser les champs du formulaire
+        email_text.clear();
+        username_text.clear();
+        password_text.clear();
+        label_login.setText("");
+        url_text.setText("https://"); //va remettre le champs pré-écrit
+
+    }
+
+
 }
 
 
