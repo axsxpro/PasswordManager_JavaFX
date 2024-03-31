@@ -35,9 +35,24 @@ public class PasswordManagerDAO implements GenericDAO<PasswordManager> {
     @Override
     public PasswordManager update(PasswordManager identifiant) {
 
-        return identifiant;
+        try {
+
+            StoredProcedure.procedureUpdatePM("{call updatePM(?, ?, ?)}",
+
+                    identifiant.getIdPasswordManager(),
+                    identifiant.getUsername(),
+                    identifiant.getPassword()
+
+            );
+
+            return identifiant;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
     }
+
 
     @Override
     public void delete(int id) {

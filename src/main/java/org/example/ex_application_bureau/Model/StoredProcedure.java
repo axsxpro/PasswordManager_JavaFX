@@ -53,6 +53,17 @@ public class StoredProcedure {
     }
 
 
+    public int procedureUpdatePM(String callProcedureSQL, int idPM, String username, String password) throws SQLException {
+
+        CallableStatement callableStatement = connection.prepareCall(callProcedureSQL);
+        callableStatement.setInt(1, idPM);
+        callableStatement.setString(2, username);
+        callableStatement.setString(3, password);
+
+        return callableStatement.executeUpdate();
+    }
+
+
 
 
 }

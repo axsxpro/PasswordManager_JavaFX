@@ -43,6 +43,8 @@ public class ListPasswordController implements Initializable {
 
     private ObservableList<PasswordManager> arrayListPassword;
 
+    private PasswordManager identifiantSelected;
+
 
     //la méthode initialize est utilisée pour configurer le tableView
     @Override
@@ -50,6 +52,7 @@ public class ListPasswordController implements Initializable {
 
         arrayListPassword = FXCollections.observableArrayList();
 
+        //iformations que l'on souhaite afficher dans la vue
         username_column.setCellValueFactory(new PropertyValueFactory<PasswordManager, String>("username"));
         password_column.setCellValueFactory(new PropertyValueFactory<PasswordManager, String>("password"));
         url_column.setCellValueFactory(new PropertyValueFactory<PasswordManager, String>("url"));
@@ -81,30 +84,14 @@ public class ListPasswordController implements Initializable {
             if (event.getClickCount() == 2) { // si il y a un double click
 
                 // La valeur renvoyée par getSelectedItem() est stockée dans la variable selectedUser, qui est de type PasswordManager.
-                PasswordManager selectedID = tableView.getSelectionModel().getSelectedItem();
+                identifiantSelected = tableView.getSelectionModel().getSelectedItem();
 
-                if (selectedID != null) {
+                if (identifiantSelected != null) {
 
-                    // Récupérer les informations de la cellule
-                    String username = selectedID.getUsername();
-                    String password = selectedID.getPassword();
-                    String url = selectedID.getUrl();
+                    // identifiantSelected : identifiant selectionné dans la cellulle
+                    // this: intanciation actuelle de ListPasswordController
+                    PasswordManagerWindow.openPasswordManager(identifiantSelected, this);
 
-                    // récupère l'URL du fichier FXML en fonction du chemin relatif spécifié
-                    FXMLLoader passwordManagerFXML = new FXMLLoader(getClass().getResource("/org/example/ex_application_bureau/View/passwordManager.fxml"));
-
-                    //loader.load() charge le fichier FXML
-                    try {
-                        Parent root = passwordManagerFXML.load();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                    // Récupérer le contrôleur de la deuxième fenêtre
-                    PasswordManagerController controller = passwordManagerFXML.getController();
-
-                    // Ouvrir une nouvelle fenêtre avec les informations de la cellule
-                    controller.openPasswordManager(username, password, url);
                 }
             }
         });
@@ -112,29 +99,34 @@ public class ListPasswordController implements Initializable {
     }
 
 
+
     @FXML
-    public void updateTableView(String username, String password, String url) {
+    public void updateTableView(PasswordManager updatedIdentifier) {
 
-        System.out.println("data to update : username : " + username  + "password:" + password + "url : " + url);
+        int idPM = updatedIdentifier.getIdPasswordManager();
+        String username = updatedIdentifier.getUsername();
+        String password = updatedIdentifier.getPassword();
+        String url = updatedIdentifier.getUrl();
 
-        System.out.println(arrayListPassword.toString());
+        System.out.println("data to update : username : " + username + ", password:" + password + " , url : " + url );
 
-        ObservableList<PasswordManager> currentTableData = tableView.getItems();
+        ObservableList<PasswordManager> currentTableView = tableView.getItems();
 
-        for (PasswordManager user : currentTableData) {
+        for (PasswordManager identifier : currentTableView) {
 
-            if (user.getUrl().equals(url)) {
+            if (identifier.getIdUser().equals(idPM)) {
+
                 // Mise à jour des propriétés de l'objet existant au lieu de créer un nouvel objet
-                user.setPassword(password);
-                user.setUsername(username);
+                identifier.setPassword(password);
+                identifier.setUsername(username);
                 break;
             }
         }
 
-        tableView.setItems(currentTableData);
+        tableView.setItems(currentTableView);
         tableView.refresh();
 
-        System.out.println("Data in Table View updated: " + currentTableData);
+        System.out.println("Data in Table View updated: " + currentTableView);
     }
 
 

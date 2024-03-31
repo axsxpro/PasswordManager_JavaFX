@@ -11,6 +11,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import org.example.ex_application_bureau.Model.DAOFactory;
+import org.example.ex_application_bureau.Model.PasswordManager;
+import org.example.ex_application_bureau.Model.PasswordManagerDAO;
+import org.mindrot.jbcrypt.BCrypt;
+
+import java.sql.SQLException;
 
 
 public class PasswordManagerController {
@@ -54,46 +60,28 @@ public class PasswordManagerController {
     @FXML
     private Label emailText_pm;
 
+    private PasswordManagerDAO passwordManagerDAO;
+
+    private PasswordManager currentIdentifier;
+
     private ListPasswordController listPasswordController;
 
 
+    public PasswordManagerController() throws SQLException {
 
-    //methode qui permet d'ouvrir la fenêtre pour éditer l'email ou le mot de passe
-    @FXML
-    public void openPasswordManager(String username, String hashedPassword, String url) {
+        this.passwordManagerDAO = (PasswordManagerDAO) DAOFactory.getPasswordManagerDAO(); // cast qui indique que l'objet retourné par DAOFactory.getPasswordManagerDAO() doit être traité comme un objet de type PasswordManagerDAO.
 
-        try {
+    }
 
-            // récupère l'URL du fichier FXML en fonction du chemin relatif spécifié
-            FXMLLoader passwordManagerFXML = new FXMLLoader(getClass().getResource("/org/example/ex_application_bureau/View/passwordManager.fxml"));
 
-            //loader.load() charge le fichier FXML
-            Parent root = passwordManagerFXML.load();
+    // lorsque la fenetre PasswordManager sera ouverte on va initialiser les attributs et la methode collectId pour affichage des données
+    public void initialize(PasswordManager identifiantSelected, ListPasswordController listPasswordControllerInstance) {
 
-            // Récupérer le contrôleur du fichier FXML
-            PasswordManagerController controller = passwordManagerFXML.getController();
+        currentIdentifier = identifiantSelected;
 
-            // Afficher les valeurs dans la vue, apelle de la methode "collectId" dans le controller "passwordManagerController" du fichier "passwordManagerFXML"
-            controller.collectId(username, hashedPassword, url);
+        listPasswordController = listPasswordControllerInstance;
 
-            // Création d'une scène avec la racine (Root), et spécification des dimensions
-            Scene scene = new Scene(root, 600, 400);
-
-            Stage primaryStage = new Stage();
-
-            // Configuration de la scène sur la fenêtre principale (primaryStage)
-            primaryStage.setScene(scene);
-
-            //Définition du titre de la fenêtre principale
-            primaryStage.setTitle("Password Manager");
-
-            // Affichage de la fenêtre principale
-            primaryStage.show();
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-        }
+        collectId(currentIdentifier.getUsername(), currentIdentifier.getPassword(), currentIdentifier.getUrl());
 
     }
 
@@ -107,8 +95,6 @@ public class PasswordManagerController {
         passwordText_pm.setText(password);
         // Afficher la valeur dans le label
         urlText_pm.setText(url);
-        // Afficher la valeur dans le label
-        //emailText_pm.setText(email);
 
 
         // Affichage des fonctionnalités lors de l'ouverture de la fenètre password Manager
@@ -125,7 +111,78 @@ public class PasswordManagerController {
     }
 
 
+    @FXML
+    public void modifyData() {
 
+        if (currentIdentifier == null) {
+
+            System.out.println("No identifier to update");
+            return;
+
+        }
+
+        if (usernameField_pm.getText().isBlank() && !passwordField_pm.getText().isBlank()) {
+
+            String password = passwordField_pm.getText();
+            String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+
+            PasswordManager updatedIdentifier = new PasswordManager(
+
+                    currentIdentifier.getIdPasswordManager(),
+                    currentIdentifier.getUsername(),
+                    hashedPassword,
+                    currentIdentifier.getUrl(),
+                    currentIdentifier.getIdUser()
+            );
+
+            passwordManagerDAO.update(updatedIdentifier);
+
+            collectId(usernameText_pm.getText(), hashedPassword, urlText_pm.getText());
+
+            listPasswordController.updateTableView(updatedIdentifier);
+
+        }
+    }
+
+
+
+    //methode qui actionne le button 'save' pour enregistrer les données
+    @FXML
+    public void saveData(ActionEvent event) {
+
+
+        if (usernameField_pm.getText().isBlank() && passwordField_pm.getText().isBlank()) {
+
+            label_pm.setText("Field cannot be blank, enter a value or cancel");
+
+        } else {
+
+            modifyData();
+
+
+            // Remettre le texte du label d'alerte à une chaîne vide
+            label_pm.setText("");
+
+            // Lors du click sur le bouton save on active ou on désactive certaines fonctionnalités
+            //false
+            save_button.setVisible(false);
+            cancel_button.setVisible(false);
+            usernameField_pm.setVisible(false);
+            passwordField_pm.setVisible(false);
+
+            //true
+            modify_button.setVisible(true);
+            delete_button.setVisible(true);
+            usernameText_pm.setVisible(true);
+            passwordText_pm.setVisible(true);
+
+        }
+
+    }
+
+
+
+    // bouton pour modifier les informations
     @FXML
     public void modifyId(ActionEvent event) {
 
@@ -148,7 +205,6 @@ public class PasswordManagerController {
     }
 
 
-
     //methode qui actionne le bouton delete
     @FXML
     public void deleteId(ActionEvent event) {
@@ -158,38 +214,6 @@ public class PasswordManagerController {
     }
 
 
-    //methode qui actionne le button 'save'
-    @FXML
-    public void saveData(ActionEvent event) {
-
-
-        if (usernameField_pm.getText().isBlank() && passwordField_pm.getText().isBlank()) {
-
-            label_pm.setText("Field cannot be blank, enter a value or cancel");
-
-        } else {
-
-
-
-            // Remettre le texte du label d'alerte à une chaîne vide
-            label_pm.setText("");
-
-            // Lors du click sur le bouton save on active ou on désactive certaines fonctionnalités
-            //false
-            save_button.setVisible(false);
-            cancel_button.setVisible(false);
-            usernameField_pm.setVisible(false);
-            passwordField_pm.setVisible(false);
-
-            //true
-            modify_button.setVisible(true);
-            delete_button.setVisible(true);
-            usernameText_pm.setVisible(true);
-            passwordText_pm.setVisible(true);
-
-        }
-
-    }
 
 
     @FXML
