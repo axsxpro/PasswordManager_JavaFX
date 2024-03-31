@@ -11,17 +11,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.mindrot.jbcrypt.BCrypt;
-
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import org.example.ex_application_bureau.Controller.ListPasswordController;
 
 
-public class passwordManagerController {
+public class PasswordManagerController {
 
     @FXML
     private Button delete_button;
@@ -66,21 +58,23 @@ public class passwordManagerController {
 
 
 
-    //methode qui permet d'ouvrir la fenetre pour éditer l'email ou le mot de passe
+    //methode qui permet d'ouvrir la fenêtre pour éditer l'email ou le mot de passe
     @FXML
-    public void openPasswordManager(String username, String hashedPassword, String url, String email) {
+    public void openPasswordManager(String username, String hashedPassword, String url) {
+
         try {
 
             // récupère l'URL du fichier FXML en fonction du chemin relatif spécifié
-            FXMLLoader passwordManagerFXML = new FXMLLoader(getClass().getResource("passwordManager.fxml"));
+            FXMLLoader passwordManagerFXML = new FXMLLoader(getClass().getResource("/org/example/ex_application_bureau/View/passwordManager.fxml"));
+
             //loader.load() charge le fichier FXML
             Parent root = passwordManagerFXML.load();
 
-            // Récupérer le contrôleur de la deuxième fenêtre
-            passwordManagerController controller = passwordManagerFXML.getController();
+            // Récupérer le contrôleur du fichier FXML
+            PasswordManagerController controller = passwordManagerFXML.getController();
 
-            // Afficher les valeurs dans la deuxième fenêtre, apelle de la methode "collectId" dans le controller "passwordManagerFXML"
-            controller.collectId(username, hashedPassword, url, email);
+            // Afficher les valeurs dans la vue, apelle de la methode "collectId" dans le controller "passwordManagerController" du fichier "passwordManagerFXML"
+            controller.collectId(username, hashedPassword, url);
 
             // Création d'une scène avec la racine (Root), et spécification des dimensions
             Scene scene = new Scene(root, 600, 400);
@@ -104,8 +98,8 @@ public class passwordManagerController {
     }
 
 
-
-    public void collectId(String username, String password, String url, String email) {
+    //methode qui permet de mettre à jour les données au niveau de la vue
+    public void collectId(String username, String password, String url) {
 
         // Afficher la valeur dans le label
         usernameText_pm.setText(username);
@@ -114,7 +108,7 @@ public class passwordManagerController {
         // Afficher la valeur dans le label
         urlText_pm.setText(url);
         // Afficher la valeur dans le label
-        emailText_pm.setText(email);
+        //emailText_pm.setText(email);
 
 
         // Affichage des fonctionnalités lors de l'ouverture de la fenètre password Manager
@@ -129,6 +123,8 @@ public class passwordManagerController {
         cancel_button.setVisible(false);
 
     }
+
+
 
     @FXML
     public void modifyId(ActionEvent event) {
@@ -174,9 +170,9 @@ public class passwordManagerController {
         } else {
 
 
+
             // Remettre le texte du label d'alerte à une chaîne vide
             label_pm.setText("");
-
 
             // Lors du click sur le bouton save on active ou on désactive certaines fonctionnalités
             //false
@@ -203,7 +199,7 @@ public class passwordManagerController {
         label_pm.setText("");
 
         // Renvoie des parametres dans la methode pour ré-affichage des données
-        collectId(usernameText_pm.getText(), passwordText_pm.getText(), urlText_pm.getText(), emailText_pm.getText());
+        collectId(usernameText_pm.getText(), passwordText_pm.getText(), urlText_pm.getText());
 
         // Lors du cancel on active ou on désactive certaines fonctionnalités
         save_button.setVisible(false);
