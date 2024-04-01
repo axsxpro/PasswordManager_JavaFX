@@ -3,14 +3,10 @@ package org.example.ex_application_bureau.Controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 import org.example.ex_application_bureau.Model.DAOFactory;
 import org.example.ex_application_bureau.Model.PasswordManager;
 import org.example.ex_application_bureau.Model.PasswordManagerDAO;
@@ -74,7 +70,7 @@ public class PasswordManagerController {
     }
 
 
-    // lorsque la fenetre PasswordManager sera ouverte on va initialiser les attributs et la methode collectId pour affichage des données
+    // lorsque la fenêtre PasswordManager sera ouverte, on va initialiser les attributs et la methode collectId pour affichage des données
     public void initialize(PasswordManager identifiantSelected, ListPasswordController listPasswordControllerInstance) {
 
         currentIdentifier = identifiantSelected;
@@ -121,9 +117,11 @@ public class PasswordManagerController {
 
         }
 
+        // si champs username est vide mais(et) le champs password n'est pas vide
         if (usernameField_pm.getText().isBlank() && !passwordField_pm.getText().isBlank()) {
 
             String password = passwordField_pm.getText();
+            //hasher le mot de passe
             String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
             PasswordManager updatedIdentifier = new PasswordManager(
@@ -135,10 +133,13 @@ public class PasswordManagerController {
                     currentIdentifier.getIdUser()
             );
 
+            //injection de l'objet dans la methode 'update' de la class passwordManagerDAO
             passwordManagerDAO.update(updatedIdentifier);
 
+            //mise à jour des données dans la vue du password manager
             collectId(usernameText_pm.getText(), hashedPassword, urlText_pm.getText());
 
+            //mise à jour des données dans la liste des mots de passe
             listPasswordController.updateTableView(updatedIdentifier);
 
         }
@@ -163,7 +164,7 @@ public class PasswordManagerController {
             // Remettre le texte du label d'alerte à une chaîne vide
             label_pm.setText("");
 
-            // Lors du click sur le bouton save on active ou on désactive certaines fonctionnalités
+            // Lors du click sur le bouton 'save' on active ou on désactive certaines fonctionnalités
             //false
             save_button.setVisible(false);
             cancel_button.setVisible(false);
@@ -225,7 +226,7 @@ public class PasswordManagerController {
         // Renvoie des parametres dans la methode pour ré-affichage des données
         collectId(usernameText_pm.getText(), passwordText_pm.getText(), urlText_pm.getText());
 
-        // Lors du cancel on active ou on désactive certaines fonctionnalités
+        // Lors du cancel, on active ou on désactive certaines fonctionnalités
         save_button.setVisible(false);
         cancel_button.setVisible(false);
         modify_button.setVisible(true);

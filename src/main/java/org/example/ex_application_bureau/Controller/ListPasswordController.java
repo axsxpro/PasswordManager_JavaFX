@@ -52,7 +52,7 @@ public class ListPasswordController implements Initializable {
 
         arrayListPassword = FXCollections.observableArrayList();
 
-        //iformations que l'on souhaite afficher dans la vue
+        //informations que l'on souhaite afficher dans la vue
         username_column.setCellValueFactory(new PropertyValueFactory<PasswordManager, String>("username"));
         password_column.setCellValueFactory(new PropertyValueFactory<PasswordManager, String>("password"));
         url_column.setCellValueFactory(new PropertyValueFactory<PasswordManager, String>("url"));
@@ -88,8 +88,8 @@ public class ListPasswordController implements Initializable {
 
                 if (identifiantSelected != null) {
 
-                    // identifiantSelected : identifiant selectionné dans la cellulle
-                    // this: intanciation actuelle de ListPasswordController
+                    // identifiantSelected : identifiant sélectionné dans la cellule
+                    // this: instantiation actuelle de ListPasswordController
                     PasswordManagerWindow.openPasswordManager(identifiantSelected, this);
 
                 }
@@ -97,7 +97,6 @@ public class ListPasswordController implements Initializable {
         });
 
     }
-
 
 
     @FXML
@@ -108,25 +107,28 @@ public class ListPasswordController implements Initializable {
         String password = updatedIdentifier.getPassword();
         String url = updatedIdentifier.getUrl();
 
-        System.out.println("data to update : username : " + username + ", password:" + password + " , url : " + url );
+        System.out.println("Data to update :  id: " + idPM + " , username : " + username + ", password:" + password + " , url : " + url );
 
-        ObservableList<PasswordManager> currentTableView = tableView.getItems();
+        for (PasswordManager identifier : arrayListPassword) {
+            System.out.println("Data in array :  Id: " + identifier.getIdPasswordManager() + ", Username: " + identifier.getUsername() + ", Password: " + identifier.getPassword() + ", URL: " + identifier.getUrl());
+        }
 
-        for (PasswordManager identifier : currentTableView) {
+        // Parcourir la liste arrayListPassword pour mettre à jour les données
+        for (PasswordManager identifier : arrayListPassword) {
 
-            if (identifier.getIdUser().equals(idPM)) {
-
-                // Mise à jour des propriétés de l'objet existant au lieu de créer un nouvel objet
+            if (identifier.getIdPasswordManager() == (idPM)) {
                 identifier.setPassword(password);
                 identifier.setUsername(username);
                 break;
             }
         }
 
-        tableView.setItems(currentTableView);
-        tableView.refresh();
+        for (PasswordManager identifier : arrayListPassword) {
+            System.out.println("Data in array after update :  Id: " + identifier.getIdPasswordManager() + ", Username: " + identifier.getUsername() + ", Password: " + identifier.getPassword() + ", URL: " + identifier.getUrl());
+        }
 
-        System.out.println("Data in Table View updated: " + currentTableView);
+        // Mettre à jour le TableView directement à partir de la liste mise à jour
+        tableView.refresh();
     }
 
 
