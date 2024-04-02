@@ -73,11 +73,11 @@ public class PasswordManagerController {
     // lorsque la fenêtre PasswordManager sera ouverte, on va initialiser les attributs et la methode collectId pour affichage des données
     public void initialize(PasswordManager identifiantSelected, ListPasswordController listPasswordControllerInstance) {
 
-        currentIdentifier = identifiantSelected;
+        currentIdentifier = identifiantSelected; //stockage de l'id sélectionné dans le tableView dans l'attribut
 
-        listPasswordController = listPasswordControllerInstance;
+        listPasswordController = listPasswordControllerInstance; // stockage de l'instanciation actuel de la class listPasswordController dans l'attribut
 
-        collectId(currentIdentifier.getUsername(), currentIdentifier.getPassword(), currentIdentifier.getUrl());
+        collectId(currentIdentifier.getUsername(), currentIdentifier.getPassword(), currentIdentifier.getUrl()); //initialisation des données sur la vue à l'ouverture de la fenêtre password manager
 
     }
 
@@ -142,7 +142,7 @@ public class PasswordManagerController {
             //mise à jour des données dans la liste des mots de passe
             listPasswordController.updateTableView(updatedIdentifier);
 
-        } else if (!usernameField_pm.getText().isBlank() && passwordField_pm.getText().isBlank())  {
+        } else if (!usernameField_pm.getText().isBlank() && passwordField_pm.getText().isBlank()) {
 
 
             PasswordManager updatedIdentifier = new PasswordManager(
@@ -191,7 +191,6 @@ public class PasswordManagerController {
     }
 
 
-
     //methode qui actionne le button 'save' pour enregistrer les données
     @FXML
     public void saveData(ActionEvent event) {
@@ -227,7 +226,6 @@ public class PasswordManagerController {
     }
 
 
-
     // bouton pour modifier les informations
     @FXML
     public void modifyId(ActionEvent event) {
@@ -251,15 +249,47 @@ public class PasswordManagerController {
     }
 
 
-    //methode qui actionne le bouton delete
     @FXML
-    public void deleteId(ActionEvent event) {
+    public void deleteData() {
+
+        if (currentIdentifier == null) {
+
+            System.out.println("No identifier to delete");
+            return;
+
+        }
+
+        //récupération de l'id de l'identifiant actuel
+        int idCurrentIdentifier = currentIdentifier.getIdPasswordManager();
+
+        //supprimer l'idetifiant par son id en faisant appel à la méthode delete de la class PasswordManagerDAO
+        passwordManagerDAO.delete(idCurrentIdentifier);
+
+        //mise à jour des données dans la vue
+        listPasswordController.deleteFromTableView(idCurrentIdentifier);
 
 
+        label_pm.setText("Username and password deleted");
+
+        modify_button.setVisible(false);
+        delete_button.setVisible(false);
+        usernameText_pm.setVisible(false);
+        passwordText_pm.setVisible(false);
+        username_pm.setVisible(false);
+        password_pm.setVisible(false);
+        urlText_pm.setVisible(false);
 
     }
 
 
+    //methode qui actionne le bouton delete
+    @FXML
+    public void deleteId(ActionEvent event) {
+
+        //appel de la méthode pour supprimer les données
+        deleteData();
+
+    }
 
 
     @FXML

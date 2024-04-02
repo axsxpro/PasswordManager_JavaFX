@@ -58,7 +58,6 @@ public class LoginController {
     private ListPasswordController listPasswordController;
 
 
-
     public LoginController() throws SQLException {
 
         this.userDAO = (UserDAO) DAOFactory.getUserDAO(); // cast qui indique que l'objet retourné par DAOFactory.getUserDAO() doit être traité comme un objet de type UserDAO.
@@ -84,15 +83,17 @@ public class LoginController {
     // methode qui vérifie si un utilisateur existe dans la base de donnée
     public void checkUserExistence() {
 
+        //vérification de l'user par son email dans la bdd
         User user = userDAO.findUserByEmail(email_text.getText());
 
+        //vérification du mot de passe
         if (user != null && user.getPassword().equals(password_text.getText())) {
 
             currentUser = user;// Stocker l'utilisateur connecté
 
             label_login.setText("Login successful");
 
-            openListPassword(); // Redirection vers la page suivante
+            openListPassword(); // Redirection vers la fenêtre suivante
 
         } else {
 
@@ -106,11 +107,13 @@ public class LoginController {
 
         if (currentUser != null) {
 
+            //récupération de tous les identifiants selon l'id de l'utilisateur connecté
             Map<Integer, PasswordManager> identifiants = passwordManagerDAO.findByIdUser(currentUser.getIdUser());
 
-            // Ajouter les mots de passe au tableau
-            for (PasswordManager identifiant: identifiants.values()) {
+            // Ajouter les identifiants au tableView
+            for (PasswordManager identifiant : identifiants.values()) {
 
+                //appel de la methode 'collectIdForListPassword' dans la class listPasswordController pour afficher les données dans le tableView
                 listPasswordController.collectIdForListPassword(
 
                         identifiant.getIdPasswordManager(),
@@ -129,7 +132,7 @@ public class LoginController {
     }
 
 
-    // methode qui permet d'ouvrir la fenetre contenant la liste des mots de passe enregistres
+    // methode qui permet d'ouvrir la fenêtre contenant la liste des mots de passe enregistrés
     @FXML
     private void openListPassword() {
 
@@ -180,9 +183,6 @@ public class LoginController {
         url_text.setText("https://"); //va remettre le champs pré-écrit
 
     }
-
-
-
 
 
 }

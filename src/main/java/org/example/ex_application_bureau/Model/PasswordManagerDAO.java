@@ -57,6 +57,15 @@ public class PasswordManagerDAO implements GenericDAO<PasswordManager> {
     @Override
     public void delete(int id) {
 
+        try {
+
+            StoredProcedure.procedureDeleteById("{call deletePMById(?)}", id);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+
+        }
+
     }
 
 
@@ -93,6 +102,5 @@ public class PasswordManagerDAO implements GenericDAO<PasswordManager> {
 
         return arrayIdentifiantByidUser;
     }
-
 
 }

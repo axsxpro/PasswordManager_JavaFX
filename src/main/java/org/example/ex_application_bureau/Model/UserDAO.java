@@ -47,7 +47,6 @@ public class UserDAO implements GenericDAO<User> {
     }
 
 
-
     public User findUserByEmail(String email) {
 
         try {

@@ -27,6 +27,7 @@ public class StoredProcedure {
     }
 
 
+    //rechercher tous les identifiants d'un user selon son idUser
     public ResultSet procedureFindByIdUser(String callProcedureSQL, int idUser) throws SQLException {
 
         CallableStatement callableStatement = connection.prepareCall(callProcedureSQL);
@@ -35,6 +36,7 @@ public class StoredProcedure {
         return callableStatement.executeQuery();
     }
 
+    //rechercher une donnée par son ID
     public ResultSet procedureFindById(String callProcedureSQL, int idType) throws SQLException {
 
         CallableStatement callableStatement = connection.prepareCall(callProcedureSQL);
@@ -44,6 +46,7 @@ public class StoredProcedure {
     }
 
 
+    // rechercher un utilisateur par son email
     public ResultSet procedureFindByEmail(String callProcedureSQL, String email) throws SQLException {
 
         CallableStatement callableStatement = connection.prepareCall(callProcedureSQL);
@@ -52,7 +55,7 @@ public class StoredProcedure {
         return callableStatement.executeQuery();
     }
 
-
+    // mettre à jour un identifiant dans le password Manager
     public int procedureUpdatePM(String callProcedureSQL, int idPM, String username, String password) throws SQLException {
 
         CallableStatement callableStatement = connection.prepareCall(callProcedureSQL);
@@ -61,6 +64,16 @@ public class StoredProcedure {
         callableStatement.setString(3, password);
 
         return callableStatement.executeUpdate();
+    }
+
+
+    //methode pour supprimer une donnée par son id
+    public ResultSet procedureDeleteById(String callProcedureSQL, int id) throws SQLException {
+
+        CallableStatement callableStatement = connection.prepareCall(callProcedureSQL);
+        callableStatement.setInt(1, id);
+
+        return callableStatement.executeQuery();
     }
 
 

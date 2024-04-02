@@ -5,9 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -15,9 +13,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.example.ex_application_bureau.Model.PasswordManager;
 import org.example.ex_application_bureau.Model.User;
-
-import java.io.*;
 import java.net.URL;
+import java.util.Iterator;
 import java.util.ResourceBundle;
 
 
@@ -107,9 +104,10 @@ public class ListPasswordController implements Initializable {
         String password = updatedIdentifier.getPassword();
         String url = updatedIdentifier.getUrl();
 
-        System.out.println("Data to update :  id: " + idPM + " , username : " + username + ", password:" + password + " , url : " + url );
+        System.out.println("Data to update :  id: " + idPM + " , username : " + username + ", password:" + password + " , url : " + url);
 
         for (PasswordManager identifier : arrayListPassword) {
+
             System.out.println("Data in array :  Id: " + identifier.getIdPasswordManager() + ", Username: " + identifier.getUsername() + ", Password: " + identifier.getPassword() + ", URL: " + identifier.getUrl());
         }
 
@@ -124,6 +122,7 @@ public class ListPasswordController implements Initializable {
         }
 
         for (PasswordManager identifier : arrayListPassword) {
+
             System.out.println("Data in array after update :  Id: " + identifier.getIdPasswordManager() + ", Username: " + identifier.getUsername() + ", Password: " + identifier.getPassword() + ", URL: " + identifier.getUrl());
         }
 
@@ -132,36 +131,52 @@ public class ListPasswordController implements Initializable {
     }
 
 
-    @FXML
-    private void refreshTableView(ActionEvent event) {
+    public void deleteFromTableView(int id) {
 
-        ObservableList<PasswordManager> currentTableData = tableView.getItems();
+        //parcourir les éléments de la liste arrayListPassword.
+        Iterator<PasswordManager> iterator = arrayListPassword.iterator();
 
-        System.out.println("Data in Table View:");
+        //boucle while qui se poursuivra tant qu'il y a des éléments à parcourir dans la liste
+        while (iterator.hasNext()) {
 
-        for (PasswordManager user : currentTableData) {
-            System.out.println("Username: " + user.getUsername() + ", Password: " + user.getPassword() + ", URL: " + user.getUrl());
+            //récupération de chaque élement de la liste
+            PasswordManager identifier = iterator.next();
 
-            if (user.getUrl().equals("https://hi.fr")) {
+            // si l'identifiant de l'élément actuel correspond à l'identifiant passé en paramètre
+            if (identifier.getIdPasswordManager() == id) {
 
-                // Mise à jour des propriétés de l'objet existant au lieu de créer un nouvel objet
-                user.setPassword("password");
-                user.setUsername("username");
-
-                System.out.println("Data in Table View updated: " + currentTableData);
-
+                //alors suppression de l'élément
+                iterator.remove();
                 break;
-
-
-            } else {
-
-                System.out.println(" no data to refresh");
             }
         }
 
-        tableView.setItems(currentTableData);
+        tableView.refresh();
+    }
+
+    @FXML
+    private void refreshTableView(ActionEvent event) {
+
+        // Mettre à jour les éléments affichés dans la TableView avec la liste arrayListPassword
+        tableView.setItems(arrayListPassword);
+
+        // Enregistrer le nombre d'éléments dans la TableView avant le rafraîchissement
+        int itemsBeforeRefresh = tableView.getItems().size();
+
+        // Rafraîchir effectivement la TableView pour refléter les changements dans les éléments affichés
         tableView.refresh();
 
+        // Enregistrer le nombre d'éléments dans la TableView après le rafraîchissement
+        int itemsAfterRefresh = tableView.getItems().size();
+
+        // Vérifier si le nombre d'éléments avant et après le rafraîchissement est le même
+        if (itemsBeforeRefresh == itemsAfterRefresh) {
+            // Si oui, afficher un message indiquant que le rafraîchissement a réussi
+            System.out.println("TableView refreshed successfully.");
+        } else {
+            // Sinon, afficher un message d'erreur
+            System.out.println("Error refreshing tableView.");
+        }
     }
 
 
