@@ -9,12 +9,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-
+import javafx.scene.control.Hyperlink;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import javafx.stage.Stage;
 
 
@@ -31,22 +30,19 @@ public class LoginController {
     private TextField password_text;
 
     @FXML
-    private Label username;
-
-    @FXML
-    private TextField username_text;
-
-    @FXML
     private Label label_login;
 
     @FXML
     private Button reset_button;
 
     @FXML
-    private TextField url_text;
+    private TextField email_text;
 
     @FXML
-    private TextField email_text;
+    private Label label_NoAccount;
+
+    @FXML
+    private Hyperlink hyperLink_createAccount;
 
     private List<Map<String, String>> arrayUsers = new ArrayList<>();
 
@@ -63,6 +59,7 @@ public class LoginController {
         this.userDAO = (UserDAO) DAOFactory.getUserDAO(); // cast qui indique que l'objet retourné par DAOFactory.getUserDAO() doit être traité comme un objet de type UserDAO.
         this.passwordManagerDAO = (PasswordManagerDAO) DAOFactory.getPasswordManagerDAO();
     }
+
 
 
     //bouton login qui va enclencher l'évenement
@@ -172,15 +169,50 @@ public class LoginController {
     }
 
 
+
+    @FXML
+    void openCreateAccount(ActionEvent event) {
+
+        try {
+
+            // récupère l'URL du fichier FXML en fonction du chemin relatif spécifié
+            FXMLLoader createAccountFXML = new FXMLLoader(getClass().getResource("/org/example/ex_application_bureau/View/createAccount.fxml"));
+            //loader.load() charge le fichier FXML
+            Parent root = createAccountFXML.load();
+
+            // Création d'une scène avec la racine (Root), et spécification des dimensions
+            Scene scene = new Scene(root, 600, 400);
+
+            Stage primaryStage = new Stage();
+
+            // Configuration de la scène sur la fenêtre principale (primaryStage)
+            primaryStage.setScene(scene);
+
+            //Définition du titre de la fenêtre principale
+            primaryStage.setTitle("Create an account");
+
+            // Affichage de la fenêtre principale
+            primaryStage.show();
+
+            //appel de la methode pour charger la liste
+            searchIdentifiantByUser();
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+    }
+
+
     //bouton reset
     public void resetLogin(ActionEvent event) {
 
         // Réinitialiser les champs du formulaire
         email_text.clear();
-        username_text.clear();
         password_text.clear();
         label_login.setText("");
-        url_text.setText("https://"); //va remettre le champs pré-écrit
+        //url_text.setText("https://"); //va remettre le champs pré-écrit
 
     }
 

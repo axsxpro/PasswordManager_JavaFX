@@ -69,7 +69,7 @@ public class ListPasswordController implements Initializable {
         tableView.setItems(arrayListPassword);
 
         //ajout de l'email dans le label
-        //email_text.setText();
+        email_text.setText(idUser.getEmail());
 
     }
 
@@ -153,6 +153,7 @@ public class ListPasswordController implements Initializable {
 
         tableView.refresh();
     }
+
 
     @FXML
     private void refreshTableView(ActionEvent event) {
