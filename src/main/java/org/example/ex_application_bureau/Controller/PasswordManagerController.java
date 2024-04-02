@@ -137,7 +137,52 @@ public class PasswordManagerController {
             passwordManagerDAO.update(updatedIdentifier);
 
             //mise à jour des données dans la vue du password manager
-            collectId(usernameText_pm.getText(), hashedPassword, urlText_pm.getText());
+            collectId(usernameText_pm.getText(), updatedIdentifier.getPassword(), urlText_pm.getText());
+
+            //mise à jour des données dans la liste des mots de passe
+            listPasswordController.updateTableView(updatedIdentifier);
+
+        } else if (!usernameField_pm.getText().isBlank() && passwordField_pm.getText().isBlank())  {
+
+
+            PasswordManager updatedIdentifier = new PasswordManager(
+
+                    currentIdentifier.getIdPasswordManager(),
+                    usernameField_pm.getText(),
+                    currentIdentifier.getPassword(),
+                    currentIdentifier.getUrl(),
+                    currentIdentifier.getIdUser()
+            );
+
+            //injection de l'objet dans la methode 'update' de la class passwordManagerDAO
+            passwordManagerDAO.update(updatedIdentifier);
+
+            //mise à jour des données dans la vue du password manager
+            collectId(updatedIdentifier.getUsername(), passwordText_pm.getText(), urlText_pm.getText());
+
+            //mise à jour des données dans la liste des mots de passe
+            listPasswordController.updateTableView(updatedIdentifier);
+
+        } else if (!passwordField_pm.getText().isBlank() && !usernameField_pm.getText().isBlank()) {
+
+            String password = passwordField_pm.getText();
+            //hasher le mot de passe
+            String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+
+            PasswordManager updatedIdentifier = new PasswordManager(
+
+                    currentIdentifier.getIdPasswordManager(),
+                    usernameField_pm.getText(),
+                    hashedPassword,
+                    currentIdentifier.getUrl(),
+                    currentIdentifier.getIdUser()
+            );
+
+            //injection de l'objet dans la methode 'update' de la class passwordManagerDAO
+            passwordManagerDAO.update(updatedIdentifier);
+
+            //mise à jour des données dans la vue du password manager
+            collectId(updatedIdentifier.getUsername(), updatedIdentifier.getPassword(), urlText_pm.getText());
 
             //mise à jour des données dans la liste des mots de passe
             listPasswordController.updateTableView(updatedIdentifier);
