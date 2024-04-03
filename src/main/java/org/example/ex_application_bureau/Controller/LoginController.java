@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import javafx.stage.Stage;
+import org.mindrot.jbcrypt.BCrypt;
 
 
 public class LoginController {
@@ -85,19 +86,30 @@ public class LoginController {
         //vérification de l'user par son email dans la bdd
         User user = userDAO.findUserByEmail(email_text.getText());
 
-        //vérification du mot de passe
-        if (user != null && user.getPassword().equals(password_text.getText())) {
+        // si l'utilisateur existe
+        if (user != null) {
 
-            currentUser = user;// Stocker l'utilisateur connecté
+            // Récupérer le mot de passe hashé de l'utilisateur
+            String hashedPassword = user.getPassword();
 
-            label_login.setText("Login successful");
+            // BCrypt.checkpw: Vérifier si le mot de passe saisi correspond au mot de passe hashé (attention != BCrypt.hashpw)
+            if (BCrypt.checkpw(password_text.getText(), hashedPassword)) {
 
-            openListPassword(); // Redirection vers la fenêtre suivante
+                currentUser = user; // Stocker l'utilisateur connecté
+
+                label_login.setText("Login successful");
+
+                openListPassword(); // Redirection vers la fenêtre list Password Manager
+
+            } else {
+                label_login.setText("Invalid email or password");
+            }
 
         } else {
 
-            label_login.setText("Invalid email or password");
+            label_login.setText("No existing account");
         }
+
     }
 
 

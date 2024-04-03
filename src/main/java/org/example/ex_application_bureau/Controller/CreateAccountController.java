@@ -77,6 +77,7 @@ public class CreateAccountController {
 
             label_validation.setText("Account created !");
 
+
             // Après la création réussie de l'utilisateur, ouvrir la fenêtre de connexion
             try {
 
@@ -92,9 +93,7 @@ public class CreateAccountController {
         } else {
 
             System.err.println("Error ! ");
-
             label_error.setText("Error when creating account");
-
         }
 
     }
@@ -126,7 +125,6 @@ public class CreateAccountController {
         label_error.setText("");
 
     }
-
 
 
 }

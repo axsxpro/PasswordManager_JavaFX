@@ -69,7 +69,7 @@ public class ListPasswordController implements Initializable {
         tableView.setItems(arrayListPassword);
 
         //ajout de l'email dans le label
-        email_text.setText(idUser.getEmail());
+        //email_text.setText();
 
     }
 
