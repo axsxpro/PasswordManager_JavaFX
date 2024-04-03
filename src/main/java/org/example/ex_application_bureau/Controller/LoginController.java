@@ -37,6 +37,9 @@ public class LoginController {
     private Label label_login;
 
     @FXML
+    private Label label_valid;
+
+    @FXML
     private Button reset_button;
 
     @FXML
@@ -97,11 +100,13 @@ public class LoginController {
 
                 currentUser = user; // Stocker l'utilisateur connecté
 
-                label_login.setText("Login successful");
+                label_login.setText("");
+                label_valid.setText("Login successful");
 
                 openListPassword(); // Redirection vers la fenêtre list Password Manager
 
             } else {
+
                 label_login.setText("Invalid email or password");
             }
 
@@ -231,6 +236,7 @@ public class LoginController {
         email_text.clear();
         password_text.clear();
         label_login.setText("");
+        label_valid.setText("");
         //url_text.setText("https://"); //va remettre le champs pré-écrit
 
     }

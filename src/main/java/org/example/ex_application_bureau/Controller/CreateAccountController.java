@@ -12,6 +12,8 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CreateAccountController {
 
@@ -63,7 +65,6 @@ public class CreateAccountController {
             String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt()); //hasher le mot de passe
             int idUser = 0; //mettre l'id à zéro car auto-incrémentation dans la bdd
 
-
             User newUser = new User(
 
                     idUser,
@@ -89,7 +90,6 @@ public class CreateAccountController {
                 e.printStackTrace();
             }
 
-
         } else {
 
             System.err.println("Error ! ");
@@ -101,28 +101,49 @@ public class CreateAccountController {
 
     //méthode pour actionner le bouton 'create'
     @FXML
-    void createUser(ActionEvent event) {
+    private void createUser(ActionEvent event) {
 
         if ((field_email.getText().isBlank()) || field_password.getText().isBlank()) {
 
             label_error.setText("Field cannot be blank");
 
+        } else if (!isValidEmail(field_email.getText())) {
+
+            label_error.setText("Invalid email format");
+
         } else {
 
             addUser();
-        }
 
+            //mettre les champs vides
+            field_email.clear();
+            field_password.clear();
+            label_error.setText("");
+        }
+    }
+
+
+    //contrainte, vérification du format de l'email
+    private boolean isValidEmail(String email) {
+
+        // Expression régulière pour valider le format de l'email
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        Pattern pattern = Pattern.compile(emailRegex);
+        Matcher matcher = pattern.matcher(email);
+
+        return matcher.matches();
     }
 
 
     //méthode pour actionner le bouton 'reset'
     @FXML
-    void resetForm(ActionEvent event) {
+    private void resetForm(ActionEvent event) {
 
         // Réinitialiser les champs du formulaire
         field_email.clear();
         field_password.clear();
         label_error.setText("");
+        label_validation.setText("");
 
     }
 

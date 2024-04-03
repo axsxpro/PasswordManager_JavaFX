@@ -33,6 +33,7 @@
             </Label>
             <Button fx:id="login_button" layoutX="36.0" layoutY="304.0" mnemonicParsing="false" onAction="#login" prefHeight="33.0" prefWidth="74.0" style="-fx-background-color: #6495ED;" text="login" textFill="WHITE" />
             <Label fx:id="label_login" alignment="CENTER" layoutX="26.0" layoutY="32.0" prefHeight="18.0" prefWidth="196.0" textFill="#c91c1c" />
+            <Label fx:id="label_valid" alignment="CENTER" layoutX="26.0" layoutY="32.0" prefHeight="18.0" prefWidth="196.0" textFill="#18b913" />
             <Button fx:id="reset_button" layoutX="137.0" layoutY="304.0" mnemonicParsing="false" onAction="#resetLogin" prefHeight="33.0" prefWidth="74.0" style="-fx-background-color: grey;" text="reset" textFill="WHITE" />
             <PasswordField fx:id="password_text" layoutX="54.0" layoutY="200.0" onAction="#login" promptText="password" />
             <Label fx:id="email" layoutX="94.0" layoutY="80.0" text="E-mail">
