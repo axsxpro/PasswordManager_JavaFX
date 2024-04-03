@@ -1,5 +1,6 @@
 package org.example.ex_application_bureau.Controller;
 
+import javafx.scene.Node;
 import org.example.ex_application_bureau.Model.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -10,10 +11,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Hyperlink;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import javafx.stage.Stage;
 
 
@@ -59,7 +62,6 @@ public class LoginController {
         this.userDAO = (UserDAO) DAOFactory.getUserDAO(); // cast qui indique que l'objet retourné par DAOFactory.getUserDAO() doit être traité comme un objet de type UserDAO.
         this.passwordManagerDAO = (PasswordManagerDAO) DAOFactory.getPasswordManagerDAO();
     }
-
 
 
     //bouton login qui va enclencher l'évenement
@@ -169,11 +171,18 @@ public class LoginController {
     }
 
 
-
     @FXML
-    void openCreateAccount(ActionEvent event) {
+    public void openCreateAccount(ActionEvent event) {
 
         try {
+
+            // Récupérer la scène actuelle
+            Scene currentScene = ((Node) event.getSource()).getScene();
+
+            // Fermer la fenêtre de la scène actuelle
+            Stage currentStage = (Stage) currentScene.getWindow();
+            currentStage.close();
+
 
             // récupère l'URL du fichier FXML en fonction du chemin relatif spécifié
             FXMLLoader createAccountFXML = new FXMLLoader(getClass().getResource("/org/example/ex_application_bureau/View/createAccount.fxml"));
@@ -194,8 +203,6 @@ public class LoginController {
             // Affichage de la fenêtre principale
             primaryStage.show();
 
-            //appel de la methode pour charger la liste
-            searchIdentifiantByUser();
 
         } catch (Exception e) {
 

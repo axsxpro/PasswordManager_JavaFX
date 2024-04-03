@@ -6,6 +6,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import org.example.ex_application_bureau.Main;
+import org.example.ex_application_bureau.Model.*;
+import org.mindrot.jbcrypt.BCrypt;
+
+import java.io.IOException;
+import java.sql.SQLException;
 
 public class CreateAccountController {
 
@@ -24,19 +30,77 @@ public class CreateAccountController {
     @FXML
     private Label label_error;
 
+    @FXML
+    private Label label_validation;
+
+    private UserDAO userDAO;
 
 
+    //constructeur
+    public CreateAccountController() throws SQLException {
 
-    public void addUser () {
-
-
+        this.userDAO = (UserDAO) DAOFactory.getUserDAO(); // cast qui indique que l'objet retourné par DAOFactory.getUserDAO() doit être traité comme un objet de type UserDAO.
 
     }
 
 
+    //méthode pour ajouter un utilisateur (créer un compte Password Manager)
+    public void addUser() {
 
 
+        // Vérifier si l'e-mail est déjà utilisé
+        if (userDAO.findUserByEmail(field_email.getText()) != null) {
 
+            label_error.setText("Email already exists!");
+
+            return; // Arrêter l'exécution de la méthode si l'e-mail existe déjà
+        }
+
+
+        if ((!field_email.getText().isBlank()) && !field_password.getText().isBlank()) {
+
+            String password = field_password.getText();
+            String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt()); //hasher le mot de passe
+            int idUser = 0; //mettre l'id à zéro car auto-incrémentation dans la bdd
+
+
+            User newUser = new User(
+
+                    idUser,
+                    field_email.getText(),
+                    hashedPassword
+            );
+
+            userDAO.create(newUser);
+
+            System.out.println("User created !" + newUser);
+
+            label_validation.setText("Account created !");
+
+            // Après la création réussie de l'utilisateur, ouvrir la fenêtre de connexion
+            try {
+
+                Main main = new Main();
+                main.openLoginWindow();
+
+            } catch (IOException e) {
+
+                e.printStackTrace();
+            }
+
+
+        } else {
+
+            System.err.println("Error ! ");
+
+            label_error.setText("Error when creating account");
+
+        }
+
+    }
+
+
+    //méthode pour actionner le bouton 'create'
     @FXML
     void createUser(ActionEvent event) {
 
@@ -52,6 +116,7 @@ public class CreateAccountController {
     }
 
 
+    //méthode pour actionner le bouton 'reset'
     @FXML
     void resetForm(ActionEvent event) {
 

@@ -19,7 +19,21 @@ public class UserDAO implements GenericDAO<User> {
 
     public User create(User user) {
 
-        return user;
+        try {
+
+            StoredProcedure.procedureCreateUser("{call createUser(?, ?, ?)}",
+
+                    user.getIdUser(),
+                    user.getEmail(),
+                    user.getPassword()
+            );
+
+            return user;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
 

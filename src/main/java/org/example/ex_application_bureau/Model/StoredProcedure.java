@@ -77,6 +77,18 @@ public class StoredProcedure {
     }
 
 
+    //créer un utilisateur
+    public ResultSet procedureCreateUser(String callProcedureSQL, int idUser, String email, String password) throws SQLException {
+
+        CallableStatement callableStatement = connection.prepareCall(callProcedureSQL);
+        callableStatement.setInt(1, idUser);
+        callableStatement.setString(2, email);
+        callableStatement.setString(3, password);
+
+        return callableStatement.executeQuery();
+
+    }
+
 
 
 }
