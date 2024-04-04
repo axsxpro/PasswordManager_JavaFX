@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.example.ex_application_bureau.Model.PasswordManager;
 
+
 public class PasswordManagerWindow {
 
 

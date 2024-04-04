@@ -5,14 +5,20 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
 import org.example.ex_application_bureau.Model.PasswordManager;
 import org.example.ex_application_bureau.Model.User;
+
+import java.io.IOException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.ResourceBundle;
@@ -33,7 +39,7 @@ public class ListPasswordController implements Initializable {
     private TableColumn<PasswordManager, String> username_column;
 
     @FXML
-    private Button refresh_button;
+    private Button newPassword_button;
 
     @FXML
     private Label email_text;
@@ -155,30 +161,38 @@ public class ListPasswordController implements Initializable {
     }
 
 
+    //button qui permet d'ouvrir la fenêtre d'ajout d'un nouveau mot de passe
     @FXML
-    private void refreshTableView(ActionEvent event) {
+    private void openAddPassWindow(ActionEvent event) {
 
-        // Mettre à jour les éléments affichés dans la TableView avec la liste arrayListPassword
-        tableView.setItems(arrayListPassword);
+        try {
 
-        // Enregistrer le nombre d'éléments dans la TableView avant le rafraîchissement
-        int itemsBeforeRefresh = tableView.getItems().size();
+            // récupère l'URL du fichier FXML en fonction du chemin relatif spécifié
+            FXMLLoader addPasswordFXML = new FXMLLoader(getClass().getResource("/org/example/ex_application_bureau/View/addPassword.fxml"));
 
-        // Rafraîchir effectivement la TableView pour refléter les changements dans les éléments affichés
-        tableView.refresh();
+            //loader.load() charge le fichier FXML
+            Parent root = addPasswordFXML.load();
 
-        // Enregistrer le nombre d'éléments dans la TableView après le rafraîchissement
-        int itemsAfterRefresh = tableView.getItems().size();
+            // Création d'une scène avec la racine (Root), et spécification des dimensions
+            Scene scene = new Scene(root, 600, 400);
 
-        // Vérifier si le nombre d'éléments avant et après le rafraîchissement est le même
-        if (itemsBeforeRefresh == itemsAfterRefresh) {
-            // Si oui, afficher un message indiquant que le rafraîchissement a réussi
-            System.out.println("TableView refreshed successfully.");
-        } else {
-            // Sinon, afficher un message d'erreur
-            System.out.println("Error refreshing tableView.");
+            Stage primaryStage = new Stage();
+
+            // Configuration de la scène sur la fenêtre principale (primaryStage)
+            primaryStage.setScene(scene);
+
+            //Définition du titre de la fenêtre principale
+            primaryStage.setTitle("Add new password");
+
+            // Affichage de la fenêtre principale
+            primaryStage.show();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+
     }
+
 
 
 }
