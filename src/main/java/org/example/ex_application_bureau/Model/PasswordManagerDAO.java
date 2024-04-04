@@ -21,7 +21,27 @@ public class PasswordManagerDAO implements GenericDAO<PasswordManager> {
 
     public PasswordManager create(PasswordManager identifiant) {
 
-        return identifiant;
+        try {
+
+            // Récupérer l'objet dans la table User correspondant à l'identifiant
+            User user = DAOFactory.getUserDAO().findById(identifiant.getIdUser().getIdUser());
+
+            StoredProcedure.procedureCreatePM("{call createPM(?, ?, ?, ?, ?)}",
+
+                    identifiant.getIdPasswordManager(),
+                    identifiant.getUsername(),
+                    identifiant.getPassword(),
+                    identifiant.getUrl(),
+                    user
+
+            );
+
+            return identifiant;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
 

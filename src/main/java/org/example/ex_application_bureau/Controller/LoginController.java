@@ -61,11 +61,13 @@ public class LoginController {
     private ListPasswordController listPasswordController;
 
 
+    //Ce constructeur est appelé automatiquement lors de la création d'une instance de LoginController
     public LoginController() throws SQLException {
 
         this.userDAO = (UserDAO) DAOFactory.getUserDAO(); // cast qui indique que l'objet retourné par DAOFactory.getUserDAO() doit être traité comme un objet de type UserDAO.
         this.passwordManagerDAO = (PasswordManagerDAO) DAOFactory.getPasswordManagerDAO();
     }
+
 
 
     //bouton login qui va enclencher l'évenement
@@ -118,6 +120,50 @@ public class LoginController {
     }
 
 
+    // methode qui permet d'ouvrir la fenêtre contenant la liste des mots de passe enregistrés
+    @FXML
+    private void openListPassword() {
+
+        try {
+
+            // récupère l'URL du fichier FXML en fonction du chemin relatif spécifié
+            FXMLLoader listPasswordFXML = new FXMLLoader(getClass().getResource("/org/example/ex_application_bureau/View/listPassword.fxml"));
+            //loader.load() charge le fichier FXML
+            Parent root = listPasswordFXML.load();
+
+            // Création d'une scène avec la racine (Root), et spécification des dimensions
+            Scene scene = new Scene(root, 600, 400);
+
+            // Récupérer le contrôleur de la deuxième fenêtre et le stocker dans une variable pour le réutiliser dans une autre méthode
+            // permet d'initialiser l'attribut 'listPasswordController'
+            listPasswordController = listPasswordFXML.getController();
+
+            // Appel de la méthode initializeCurrentUser pour configurer les données nécessaires concernant l'utilisateur connecté
+            listPasswordController.initializeCurrentUser(currentUser);
+
+            Stage primaryStage = new Stage();
+
+            // Configuration de la scène sur la fenêtre principale (primaryStage)
+            primaryStage.setScene(scene);
+
+            //Définition du titre de la fenêtre principale
+            primaryStage.setTitle("List of passwords");
+
+            // Affichage de la fenêtre principale
+            primaryStage.show();
+
+            //appel de la methode pour charger la liste
+            searchIdentifiantByUser();
+
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+    }
+
+
     // Méthode pour afficher les mots de passe associés à l'utilisateur connecté
     private void searchIdentifiantByUser() throws SQLException {
 
@@ -140,49 +186,10 @@ public class LoginController {
                 );
             }
 
+
         } else {
 
             System.err.println("No user logged in");
-        }
-
-    }
-
-
-    // methode qui permet d'ouvrir la fenêtre contenant la liste des mots de passe enregistrés
-    @FXML
-    private void openListPassword() {
-
-        try {
-
-            // récupère l'URL du fichier FXML en fonction du chemin relatif spécifié
-            FXMLLoader listPasswordFXML = new FXMLLoader(getClass().getResource("/org/example/ex_application_bureau/View/listPassword.fxml"));
-            //loader.load() charge le fichier FXML
-            Parent root = listPasswordFXML.load();
-
-            // Création d'une scène avec la racine (Root), et spécification des dimensions
-            Scene scene = new Scene(root, 600, 400);
-
-            // Récupérer le contrôleur de la deuxième fenêtre et le stocker dans une variable pour le réutiliser dans une autre méthode
-            // permet d'initialiser l'attribut 'listPasswordController'
-            listPasswordController = listPasswordFXML.getController();
-
-            Stage primaryStage = new Stage();
-
-            // Configuration de la scène sur la fenêtre principale (primaryStage)
-            primaryStage.setScene(scene);
-
-            //Définition du titre de la fenêtre principale
-            primaryStage.setTitle("List of passwords");
-
-            // Affichage de la fenêtre principale
-            primaryStage.show();
-
-            //appel de la methode pour charger la liste
-            searchIdentifiantByUser();
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
         }
 
     }
@@ -237,7 +244,6 @@ public class LoginController {
         password_text.clear();
         label_login.setText("");
         label_valid.setText("");
-        //url_text.setText("https://"); //va remettre le champs pré-écrit
 
     }
 

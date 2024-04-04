@@ -44,6 +44,8 @@ public class ListPasswordController implements Initializable {
     @FXML
     private Label email_text;
 
+    private User currentUser;
+
     private ObservableList<PasswordManager> arrayListPassword;
 
     private PasswordManager identifiantSelected;
@@ -65,17 +67,25 @@ public class ListPasswordController implements Initializable {
     }
 
 
+    public void initializeCurrentUser(User currentUser) {
+
+        this.currentUser = currentUser;
+
+        //ajout de l'email dans le label
+        email_text.setText(currentUser.getEmail());
+
+    }
+
+
     //collecter les données pour afficher dans le tableau des mots de passe
     public void collectIdForListPassword(int idPasswordManager, String username, String password, String url, User idUser) {
+
 
         //ajout des valeurs dans les colonnes
         arrayListPassword.add(new PasswordManager(idPasswordManager, username, password, url, idUser));
 
         // Mettre à jour le TableView
         tableView.setItems(arrayListPassword);
-
-        //ajout de l'email dans le label
-        //email_text.setText();
 
     }
 
@@ -175,6 +185,12 @@ public class ListPasswordController implements Initializable {
 
             // Création d'une scène avec la racine (Root), et spécification des dimensions
             Scene scene = new Scene(root, 600, 400);
+
+            // Récupérer le contrôleur
+            AddPasswordController controller = addPasswordFXML.getController();
+
+            //appel de la methode initialize() du controller PasswordManagerController et injecté les instanciations pour les réutiliser dans le controller
+            controller.initialize(currentUser, this);
 
             Stage primaryStage = new Stage();
 

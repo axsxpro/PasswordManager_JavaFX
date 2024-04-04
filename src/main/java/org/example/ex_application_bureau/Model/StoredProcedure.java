@@ -89,6 +89,20 @@ public class StoredProcedure {
 
     }
 
+    //procédure pour créer de nouveaux identifiants/mdp
+    public ResultSet procedureCreatePM(String callProcedureSQL, int idPM, String username, String password, String url, User user) throws SQLException {
+
+        CallableStatement callableStatement = connection.prepareCall(callProcedureSQL);
+        callableStatement.setInt(1, idPM);
+        callableStatement.setString(2, username);
+        callableStatement.setString(3, password);
+        callableStatement.setString(4, url);
+        callableStatement.setInt(5, user.getIdUser());
+
+        return callableStatement.executeQuery();
+
+    }
+
 
 
 }

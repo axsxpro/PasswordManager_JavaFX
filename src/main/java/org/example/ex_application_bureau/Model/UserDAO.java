@@ -92,10 +92,12 @@ public class UserDAO implements GenericDAO<User> {
 
     }
 
+
     @Override
     public void delete(int id) {
 
     }
+
 
     public Map<Integer, User> findAll() throws SQLException {
 
