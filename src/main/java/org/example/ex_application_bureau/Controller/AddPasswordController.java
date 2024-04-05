@@ -65,13 +65,15 @@ public class AddPasswordController {
         //creation de l'objet identifiant
         PasswordManager newIdentifier = new PasswordManager(0, username, password, url, currentUser);
 
+
+
         //creation du nouvel identifiant par la procédure stockée
         PasswordManager identifierCreated = passwordManagerDAO.create(newIdentifier);
 
 
         if (identifierCreated != null) {
 
-            System.out.println("Identifier created !");
+            System.out.println("Identifier created ! -> " + identifierCreated);
             label_validation.setText("Identifier created !");
             resetForm();
 

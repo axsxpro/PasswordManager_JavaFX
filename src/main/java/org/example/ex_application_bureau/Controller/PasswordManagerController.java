@@ -107,6 +107,92 @@ public class PasswordManagerController {
     }
 
 
+//
+//    @FXML
+//    public void modifyData() {
+//
+//        if (currentIdentifier == null) {
+//
+//            System.out.println("No identifier to update");
+//            return;
+//
+//        }
+//
+//        // si champs username est vide mais(et) le champs password n'est pas vide
+//        if (usernameField_pm.getText().isBlank() && !passwordField_pm.getText().isBlank()) {
+//
+//            String password = passwordField_pm.getText();
+//            //hasher le mot de passe
+//            String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+//
+//            PasswordManager updatedIdentifier = new PasswordManager(
+//
+//                    currentIdentifier.getIdPasswordManager(),
+//                    currentIdentifier.getUsername(),
+//                    hashedPassword,
+//                    currentIdentifier.getUrl(),
+//                    currentIdentifier.getIdUser()
+//            );
+//
+//            //injection de l'objet dans la methode 'update' de la class passwordManagerDAO
+//            passwordManagerDAO.update(updatedIdentifier);
+//
+//            //mise à jour des données dans la vue du password manager
+//            collectId(usernameText_pm.getText(), updatedIdentifier.getPassword(), urlText_pm.getText());
+//
+//            //mise à jour des données dans la liste des mots de passe
+//            listPasswordController.updateTableView(updatedIdentifier);
+//
+//
+//        } else if (!usernameField_pm.getText().isBlank() && passwordField_pm.getText().isBlank()) {
+//
+//
+//            PasswordManager updatedIdentifier = new PasswordManager(
+//
+//                    currentIdentifier.getIdPasswordManager(),
+//                    usernameField_pm.getText(),
+//                    currentIdentifier.getPassword(),
+//                    currentIdentifier.getUrl(),
+//                    currentIdentifier.getIdUser()
+//            );
+//
+//            //injection de l'objet dans la methode 'update' de la class passwordManagerDAO
+//            passwordManagerDAO.update(updatedIdentifier);
+//
+//            //mise à jour des données dans la vue du password manager
+//            collectId(updatedIdentifier.getUsername(), passwordText_pm.getText(), urlText_pm.getText());
+//
+//            //mise à jour des données dans la liste des mots de passe
+//            listPasswordController.updateTableView(updatedIdentifier);
+//
+//        } else if (!passwordField_pm.getText().isBlank() && !usernameField_pm.getText().isBlank()) {
+//
+//            String password = passwordField_pm.getText();
+//            //hasher le mot de passe
+//            String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+//
+//            PasswordManager updatedIdentifier = new PasswordManager(
+//
+//                    currentIdentifier.getIdPasswordManager(),
+//                    usernameField_pm.getText(),
+//                    hashedPassword,
+//                    currentIdentifier.getUrl(),
+//                    currentIdentifier.getIdUser()
+//            );
+//
+//            //injection de l'objet dans la methode 'update' de la class passwordManagerDAO
+//            passwordManagerDAO.update(updatedIdentifier);
+//
+//            //mise à jour des données dans la vue du password manager
+//            collectId(updatedIdentifier.getUsername(), updatedIdentifier.getPassword(), urlText_pm.getText());
+//
+//            //mise à jour des données dans la liste des mots de passe
+//            listPasswordController.updateTableView(updatedIdentifier);
+//
+//        }
+//    }
+
+
     @FXML
     public void modifyData() {
 
@@ -115,80 +201,49 @@ public class PasswordManagerController {
             System.out.println("No identifier to update");
             return;
 
+        } else {
+
+            System.out.println("Data to modify :" + currentIdentifier);
         }
 
-        // si champs username est vide mais(et) le champs password n'est pas vide
-        if (usernameField_pm.getText().isBlank() && !passwordField_pm.getText().isBlank()) {
 
-            String password = passwordField_pm.getText();
-            //hasher le mot de passe
-            String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-
-            PasswordManager updatedIdentifier = new PasswordManager(
-
-                    currentIdentifier.getIdPasswordManager(),
-                    currentIdentifier.getUsername(),
-                    hashedPassword,
-                    currentIdentifier.getUrl(),
-                    currentIdentifier.getIdUser()
-            );
-
-            //injection de l'objet dans la methode 'update' de la class passwordManagerDAO
-            passwordManagerDAO.update(updatedIdentifier);
-
-            //mise à jour des données dans la vue du password manager
-            collectId(usernameText_pm.getText(), updatedIdentifier.getPassword(), urlText_pm.getText());
-
-            //mise à jour des données dans la liste des mots de passe
-            listPasswordController.updateTableView(updatedIdentifier);
+        String newUsername = usernameField_pm.getText();
+        String newPassword = passwordField_pm.getText();
 
 
-        } else if (!usernameField_pm.getText().isBlank() && passwordField_pm.getText().isBlank()) {
+        // Vérifiez si le mot de passe a été modifié
+        if (!newPassword.isBlank()) {
 
-
-            PasswordManager updatedIdentifier = new PasswordManager(
-
-                    currentIdentifier.getIdPasswordManager(),
-                    usernameField_pm.getText(),
-                    currentIdentifier.getPassword(),
-                    currentIdentifier.getUrl(),
-                    currentIdentifier.getIdUser()
-            );
-
-            //injection de l'objet dans la methode 'update' de la class passwordManagerDAO
-            passwordManagerDAO.update(updatedIdentifier);
-
-            //mise à jour des données dans la vue du password manager
-            collectId(updatedIdentifier.getUsername(), passwordText_pm.getText(), urlText_pm.getText());
-
-            //mise à jour des données dans la liste des mots de passe
-            listPasswordController.updateTableView(updatedIdentifier);
-
-        } else if (!passwordField_pm.getText().isBlank() && !usernameField_pm.getText().isBlank()) {
-
-            String password = passwordField_pm.getText();
-            //hasher le mot de passe
-            String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-
-            PasswordManager updatedIdentifier = new PasswordManager(
-
-                    currentIdentifier.getIdPasswordManager(),
-                    usernameField_pm.getText(),
-                    hashedPassword,
-                    currentIdentifier.getUrl(),
-                    currentIdentifier.getIdUser()
-            );
-
-            //injection de l'objet dans la methode 'update' de la class passwordManagerDAO
-            passwordManagerDAO.update(updatedIdentifier);
-
-            //mise à jour des données dans la vue du password manager
-            collectId(updatedIdentifier.getUsername(), updatedIdentifier.getPassword(), urlText_pm.getText());
-
-            //mise à jour des données dans la liste des mots de passe
-            listPasswordController.updateTableView(updatedIdentifier);
-
+            // Hasher le nouveau mot de passe
+            String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+            currentIdentifier.setPassword(hashedPassword);
         }
+
+        // Vérifiez si le nom d'utilisateur a été modifié
+        if (!newUsername.isBlank()) {
+
+            currentIdentifier.setUsername(newUsername);
+        }
+
+
+        // Maj de la base de données avec les modifications
+        PasswordManager updatedIdentifier = passwordManagerDAO.update(currentIdentifier);
+
+        if (updatedIdentifier != null) {
+
+            System.out.println("Data updated successfully");
+
+            // Mettre à jour la vue
+            collectId(updatedIdentifier.getUsername(), updatedIdentifier.getPassword(), updatedIdentifier.getUrl());
+
+            // Mettre à jour la liste des mots de passe dans le contrôleur ListPasswordController
+            listPasswordController.updateTableView(updatedIdentifier);
+
+        } else {
+
+            System.out.println("Failed to update data");
+        }
+
     }
 
 
@@ -302,7 +357,7 @@ public class PasswordManagerController {
         // Renvoie des parametres dans la methode pour ré-affichage des données
         collectId(usernameText_pm.getText(), passwordText_pm.getText(), urlText_pm.getText());
 
-        // Lors du cancel, on active ou on désactive certaines fonctionnalités
+        // Lors du cancel, activation ou désactivation de certaines fonctionnalités
         save_button.setVisible(false);
         cancel_button.setVisible(false);
         modify_button.setVisible(true);

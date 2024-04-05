@@ -56,4 +56,8 @@ public class PasswordManager {
         this.idUser = idUser;
     }
 
+    public String toString() {
+        return "ID passwordManager: " + idPasswordManager + ", username: " + username + ", url :" + url + ", id User" + idUser;
+    }
+
 }

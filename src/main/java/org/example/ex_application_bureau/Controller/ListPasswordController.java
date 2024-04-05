@@ -48,7 +48,10 @@ public class ListPasswordController implements Initializable {
 
     private ObservableList<PasswordManager> arrayListPassword;
 
-    private PasswordManager identifiantSelected;
+    private PasswordManager identifierSelected;
+
+    private Stage addPasswordStage;
+
 
 
     //la méthode initialize est utilisée pour configurer le tableView
@@ -80,12 +83,14 @@ public class ListPasswordController implements Initializable {
     //collecter les données pour afficher dans le tableau des mots de passe
     public void collectIdForListPassword(int idPasswordManager, String username, String password, String url, User idUser) {
 
-
         //ajout des valeurs dans les colonnes
         arrayListPassword.add(new PasswordManager(idPasswordManager, username, password, url, idUser));
 
         // Mettre à jour le TableView
         tableView.setItems(arrayListPassword);
+
+        //rafraichir le tableau
+        tableView.refresh();
 
     }
 
@@ -97,13 +102,15 @@ public class ListPasswordController implements Initializable {
             if (event.getClickCount() == 2) { // si il y a un double click
 
                 // La valeur renvoyée par getSelectedItem() est stockée dans la variable selectedUser, qui est de type PasswordManager.
-                identifiantSelected = tableView.getSelectionModel().getSelectedItem();
+                identifierSelected = tableView.getSelectionModel().getSelectedItem();
 
-                if (identifiantSelected != null) {
+                if (identifierSelected != null) {
+
+                    System.out.println("identifier selected: " + identifierSelected);
 
                     // identifiantSelected : identifiant sélectionné dans la cellule
                     // this: instantiation actuelle de ListPasswordController
-                    PasswordManagerWindow.openPasswordManager(identifiantSelected, this);
+                    PasswordManagerWindow.openPasswordManager(identifierSelected, this);
 
                 }
             }
@@ -175,38 +182,55 @@ public class ListPasswordController implements Initializable {
     @FXML
     private void openAddPassWindow(ActionEvent event) {
 
-        try {
+        // Vérifie si la fenêtre d'ajout de mot de passe est déjà ouverte
+        if (addPasswordStage == null) {
 
-            // récupère l'URL du fichier FXML en fonction du chemin relatif spécifié
-            FXMLLoader addPasswordFXML = new FXMLLoader(getClass().getResource("/org/example/ex_application_bureau/View/addPassword.fxml"));
+            try {
 
-            //loader.load() charge le fichier FXML
-            Parent root = addPasswordFXML.load();
+                // Récupère l'URL du fichier FXML en fonction du chemin relatif spécifié
+                FXMLLoader addPasswordFXML = new FXMLLoader(getClass().getResource("/org/example/ex_application_bureau/View/addPassword.fxml"));
 
-            // Création d'une scène avec la racine (Root), et spécification des dimensions
-            Scene scene = new Scene(root, 600, 400);
+                // Charge le fichier FXML
+                Parent root = addPasswordFXML.load();
 
-            // Récupérer le contrôleur
-            AddPasswordController controller = addPasswordFXML.getController();
+                // Crée une scène avec la racine (Root), et spécifie les dimensions
+                Scene scene = new Scene(root, 600, 400);
 
-            //appel de la methode initialize() du controller PasswordManagerController et injecté les instanciations pour les réutiliser dans le controller
-            controller.initialize(currentUser, this);
+                // Récupère le contrôleur
+                AddPasswordController controller = addPasswordFXML.getController();
 
-            Stage primaryStage = new Stage();
+                // Appelle la méthode initialize() du controller AddPasswordController et injecte les instances nécessaires
+                controller.initialize(currentUser, this);
 
-            // Configuration de la scène sur la fenêtre principale (primaryStage)
-            primaryStage.setScene(scene);
+                // Crée une nouvelle fenêtre
+                addPasswordStage = new Stage();
 
-            //Définition du titre de la fenêtre principale
-            primaryStage.setTitle("Add new password");
+                // Configure la scène sur la nouvelle fenêtre
+                addPasswordStage.setScene(scene);
 
-            // Affichage de la fenêtre principale
-            primaryStage.show();
+                // Définit le titre de la fenêtre
+                addPasswordStage.setTitle("Add new password");
 
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+                // Ajoute un écouteur pour l'événement de fermeture de la fenêtre
+                addPasswordStage.setOnCloseRequest(closeEvent-> {
+
+                    // Réinitialise la variable addPasswordStage à null lorsque la fenêtre est fermée
+                    addPasswordStage = null;
+
+                });
+
+                // Affiche la fenêtre
+                addPasswordStage.show();
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+        } else {
+
+            // Si la fenêtre est déjà ouverte, la ramène simplement au premier plan
+            addPasswordStage.toFront();
         }
-
     }
 
 
