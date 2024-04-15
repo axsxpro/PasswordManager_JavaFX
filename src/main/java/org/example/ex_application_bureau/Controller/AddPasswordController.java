@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import org.example.ex_application_bureau.Model.*;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;
 
@@ -58,13 +59,13 @@ public class AddPasswordController {
     public void addIdentifier() throws SQLException {
 
         String username = username_field.getText();
-        String password = password_field.getText();
+        String hashedPassword = BCrypt.hashpw(password_field.getText(), BCrypt.gensalt());
         String url = url_field.getText();
 
 
         //creation de l'objet identifiant
         //attention création de l'id avec 0 !
-        PasswordManager newIdentifier = new PasswordManager(0, username, password, url, currentUser);
+        PasswordManager newIdentifier = new PasswordManager(0, username, hashedPassword, url, currentUser);
 
         //creation du nouvel identifiant par la procédure stockée
         PasswordManager identifierCreated = passwordManagerDAO.create(newIdentifier);
