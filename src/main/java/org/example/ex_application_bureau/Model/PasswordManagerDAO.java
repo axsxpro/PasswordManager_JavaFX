@@ -48,6 +48,28 @@ public class PasswordManagerDAO implements GenericDAO<PasswordManager> {
     @Override
     public PasswordManager findById(int id) {
 
+        try {
+
+            ResultSet resultStoredProcedure = StoredProcedure.procedureFindById("{call findOnePMById(?)}", id);
+
+            if (resultStoredProcedure.next()) {
+
+                int idPM = resultStoredProcedure.getInt("ID_passwordManager");
+                String username = resultStoredProcedure.getString("USERNAME");
+                String password = resultStoredProcedure.getString("PASSWORD");
+                String url = resultStoredProcedure.getString("URL");
+                int userId = resultStoredProcedure.getInt("ID_USER");
+
+                User idUser = DAOFactory.getUserDAO().findById(userId);
+
+                PasswordManager passwordManager = new PasswordManager(idPM, username, password, url, idUser);
+                return passwordManager;
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         return null;
     }
 
@@ -122,5 +144,29 @@ public class PasswordManagerDAO implements GenericDAO<PasswordManager> {
 
         return arrayIdentifiantByidUser;
     }
+
+
+    public Integer getLastId() throws SQLException {
+
+        int lastId = 0;
+
+        try {
+
+            ResultSet resultStoredProcedure = StoredProcedure.procedureGetLastId("{call selectMaxIdPM}");
+
+            while (resultStoredProcedure.next()) {
+
+                lastId = resultStoredProcedure.getInt(1);
+            }
+
+            return lastId;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+
 
 }

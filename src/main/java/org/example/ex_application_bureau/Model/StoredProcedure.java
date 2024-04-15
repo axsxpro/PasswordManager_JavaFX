@@ -104,5 +104,14 @@ public class StoredProcedure {
     }
 
 
+    // methode procédure stockée pour rechercher le dernier indentifiant d'une table
+    public ResultSet procedureGetLastId(String callProcedureSQL) throws SQLException {
+
+        CallableStatement callableStatement = connection.prepareCall(callProcedureSQL);
+
+        return callableStatement.executeQuery();
+    }
+
+
 
 }

@@ -55,7 +55,7 @@ public class AddPasswordController {
     }
 
 
-    public void addIdentifier() {
+    public void addIdentifier() throws SQLException {
 
         String username = username_field.getText();
         String password = password_field.getText();
@@ -63,9 +63,8 @@ public class AddPasswordController {
 
 
         //creation de l'objet identifiant
+        //attention création de l'id avec 0 !
         PasswordManager newIdentifier = new PasswordManager(0, username, password, url, currentUser);
-
-
 
         //creation du nouvel identifiant par la procédure stockée
         PasswordManager identifierCreated = passwordManagerDAO.create(newIdentifier);
@@ -77,15 +76,22 @@ public class AddPasswordController {
             label_validation.setText("Identifier created !");
             resetForm();
 
+            // Récupération du dernier identifiant généré automatiquement par la base de données
+            int lastInsertedId = passwordManagerDAO.getLastId();
+
+            //récupération de l'identifiant crée dans la bdd afin d'avoir le bon id
+            PasswordManager identifierSelected = DAOFactory.getPasswordManagerDAO().findById(lastInsertedId);
+
 
             // Mise à jour du TableView dans le ListPasswordController avec le nouvel identifiant créé
             listPasswordController.collectIdForListPassword(
 
-                    identifierCreated.getIdPasswordManager(),
-                    identifierCreated.getUsername(),
-                    identifierCreated.getPassword(),
-                    identifierCreated.getUrl(),
-                    identifierCreated.getIdUser()
+
+                    identifierSelected.getIdPasswordManager(),
+                    identifierSelected.getUsername(),
+                    identifierSelected.getPassword(),
+                    identifierSelected.getUrl(),
+                    identifierSelected.getIdUser()
             );
 
 
@@ -99,7 +105,7 @@ public class AddPasswordController {
 
 
     @FXML
-    private void saveNewPassword(ActionEvent event) {
+    private void saveNewPassword(ActionEvent event) throws SQLException {
 
         if ((password_field.getText().isBlank()) || username_field.getText().isBlank() || url_field.getText().isBlank()) {
 
