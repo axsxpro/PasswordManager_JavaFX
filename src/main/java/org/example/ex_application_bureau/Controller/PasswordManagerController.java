@@ -1,16 +1,20 @@
 package org.example.ex_application_bureau.Controller;
 
 
+import io.github.cdimascio.dotenv.Dotenv;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import org.example.ex_application_bureau.Model.DAOFactory;
 import org.example.ex_application_bureau.Model.PasswordManager;
 import org.example.ex_application_bureau.Model.PasswordManagerDAO;
-import org.mindrot.jbcrypt.BCrypt;
+
+
 
 import java.sql.SQLException;
 
@@ -55,6 +59,12 @@ public class PasswordManagerController {
 
     @FXML
     private Label emailText_pm;
+
+    @FXML
+    private ImageView img_eyeClosed;
+
+    @FXML
+    private ImageView img_eyeOpen;
 
     private PasswordManagerDAO passwordManagerDAO;
 
@@ -107,94 +117,8 @@ public class PasswordManagerController {
     }
 
 
-//
-//    @FXML
-//    public void modifyData() {
-//
-//        if (currentIdentifier == null) {
-//
-//            System.out.println("No identifier to update");
-//            return;
-//
-//        }
-//
-//        // si champs username est vide mais(et) le champs password n'est pas vide
-//        if (usernameField_pm.getText().isBlank() && !passwordField_pm.getText().isBlank()) {
-//
-//            String password = passwordField_pm.getText();
-//            //hasher le mot de passe
-//            String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-//
-//            PasswordManager updatedIdentifier = new PasswordManager(
-//
-//                    currentIdentifier.getIdPasswordManager(),
-//                    currentIdentifier.getUsername(),
-//                    hashedPassword,
-//                    currentIdentifier.getUrl(),
-//                    currentIdentifier.getIdUser()
-//            );
-//
-//            //injection de l'objet dans la methode 'update' de la class passwordManagerDAO
-//            passwordManagerDAO.update(updatedIdentifier);
-//
-//            //mise à jour des données dans la vue du password manager
-//            collectId(usernameText_pm.getText(), updatedIdentifier.getPassword(), urlText_pm.getText());
-//
-//            //mise à jour des données dans la liste des mots de passe
-//            listPasswordController.updateTableView(updatedIdentifier);
-//
-//
-//        } else if (!usernameField_pm.getText().isBlank() && passwordField_pm.getText().isBlank()) {
-//
-//
-//            PasswordManager updatedIdentifier = new PasswordManager(
-//
-//                    currentIdentifier.getIdPasswordManager(),
-//                    usernameField_pm.getText(),
-//                    currentIdentifier.getPassword(),
-//                    currentIdentifier.getUrl(),
-//                    currentIdentifier.getIdUser()
-//            );
-//
-//            //injection de l'objet dans la methode 'update' de la class passwordManagerDAO
-//            passwordManagerDAO.update(updatedIdentifier);
-//
-//            //mise à jour des données dans la vue du password manager
-//            collectId(updatedIdentifier.getUsername(), passwordText_pm.getText(), urlText_pm.getText());
-//
-//            //mise à jour des données dans la liste des mots de passe
-//            listPasswordController.updateTableView(updatedIdentifier);
-//
-//        } else if (!passwordField_pm.getText().isBlank() && !usernameField_pm.getText().isBlank()) {
-//
-//            String password = passwordField_pm.getText();
-//            //hasher le mot de passe
-//            String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-//
-//            PasswordManager updatedIdentifier = new PasswordManager(
-//
-//                    currentIdentifier.getIdPasswordManager(),
-//                    usernameField_pm.getText(),
-//                    hashedPassword,
-//                    currentIdentifier.getUrl(),
-//                    currentIdentifier.getIdUser()
-//            );
-//
-//            //injection de l'objet dans la methode 'update' de la class passwordManagerDAO
-//            passwordManagerDAO.update(updatedIdentifier);
-//
-//            //mise à jour des données dans la vue du password manager
-//            collectId(updatedIdentifier.getUsername(), updatedIdentifier.getPassword(), urlText_pm.getText());
-//
-//            //mise à jour des données dans la liste des mots de passe
-//            listPasswordController.updateTableView(updatedIdentifier);
-//
-//        }
-//    }
-
-
     @FXML
-    public void modifyData() {
+    public void modifyData() throws Exception {
 
         if (currentIdentifier == null) {
 
@@ -214,9 +138,14 @@ public class PasswordManagerController {
         // Vérifiez si le mot de passe a été modifié
         if (!newPassword.isBlank()) {
 
-            // Hasher le nouveau mot de passe
-            String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
-            currentIdentifier.setPassword(hashedPassword);
+            Dotenv dotenv = Dotenv.configure().load();
+            // Récupérer la clé secrète du fichier .env
+            String secretKey = dotenv.get("SECRET_KEY");
+
+            //crypter le mot de passe
+            String encryptedPassword = EncryptionManagerController.encrypt(newPassword, secretKey);
+            currentIdentifier.setPassword(encryptedPassword);
+
         }
 
         // Vérifiez si le nom d'utilisateur a été modifié
@@ -249,7 +178,7 @@ public class PasswordManagerController {
 
     //methode qui actionne le button 'save' pour enregistrer les données
     @FXML
-    public void saveData(ActionEvent event) {
+    public void saveData(ActionEvent event) throws Exception {
 
 
         if (usernameField_pm.getText().isBlank() && passwordField_pm.getText().isBlank()) {
@@ -362,6 +291,42 @@ public class PasswordManagerController {
         cancel_button.setVisible(false);
         modify_button.setVisible(true);
         delete_button.setVisible(true);
+
+    }
+
+
+    @FXML
+    void showPassword(MouseEvent event) throws Exception {
+
+        img_eyeOpen.setVisible(false);
+        img_eyeClosed.setVisible(true);
+
+        //récupérer le mot de passe de l'objet PasswordManager
+        String encryptedPassword = currentIdentifier.getPassword();
+
+        // Récupérer la clé secrète du fichier .env
+        Dotenv dotenv = Dotenv.configure().load();
+        String secretKey = dotenv.get("SECRET_KEY");
+
+        // Décrypter le mot de passe
+        String decryptedPassword = EncryptionManagerController.decrypt(encryptedPassword, secretKey);
+
+        // Afficher le mot de passe décrypté
+        passwordText_pm.setText(decryptedPassword);
+
+    }
+
+
+    @FXML
+    public void hidePassword(MouseEvent event) {
+        img_eyeOpen.setVisible(true);
+        img_eyeClosed.setVisible(false);
+
+        // Récupérer le mot de passe crypté actuel
+        String encryptedPassword = currentIdentifier.getPassword();
+
+        // Mettre à jour le champ de texte du mot de passe avec le mot de passe crypté
+        passwordText_pm.setText(encryptedPassword);
 
     }
 

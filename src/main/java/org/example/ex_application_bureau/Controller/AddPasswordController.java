@@ -1,5 +1,6 @@
 package org.example.ex_application_bureau.Controller;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -10,6 +11,7 @@ import org.example.ex_application_bureau.Model.*;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;
+
 
 public class AddPasswordController {
 
@@ -41,10 +43,12 @@ public class AddPasswordController {
     private PasswordManagerDAO passwordManagerDAO;
 
 
+
     //constructeur
     public AddPasswordController() throws SQLException {
 
         this.passwordManagerDAO = (PasswordManagerDAO) DAOFactory.getPasswordManagerDAO();
+
     }
 
 
@@ -56,16 +60,22 @@ public class AddPasswordController {
     }
 
 
-    public void addIdentifier() throws SQLException {
+    public void addIdentifier() throws Exception {
 
+        // Charger les variables d'environnement à partir du fichier .env
+        Dotenv dotenv = Dotenv.configure().load();
+        // Récupérer la clé secrète du fichier .env
+        String secretKey = dotenv.get("SECRET_KEY");
+
+        //crypter le mot de passe
+        String encryptedPassword = EncryptionManagerController.encrypt(password_field.getText(), secretKey);
         String username = username_field.getText();
-        String hashedPassword = BCrypt.hashpw(password_field.getText(), BCrypt.gensalt());
         String url = url_field.getText();
 
 
         //creation de l'objet identifiant
         //attention création de l'id avec 0 !
-        PasswordManager newIdentifier = new PasswordManager(0, username, hashedPassword, url, currentUser);
+        PasswordManager newIdentifier = new PasswordManager(0, username, encryptedPassword, url, currentUser);
 
         //creation du nouvel identifiant par la procédure stockée
         PasswordManager identifierCreated = passwordManagerDAO.create(newIdentifier);
@@ -106,7 +116,7 @@ public class AddPasswordController {
 
 
     @FXML
-    private void saveNewPassword(ActionEvent event) throws SQLException {
+    private void saveNewPassword(ActionEvent event) throws Exception {
 
         if ((password_field.getText().isBlank()) || username_field.getText().isBlank() || url_field.getText().isBlank()) {
 

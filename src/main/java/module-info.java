@@ -7,6 +7,7 @@ module org.example.ex_application_bureau {
     requires jbcrypt;
     requires json;
     requires java.sql;
+    requires java.dotenv;
 
     opens org.example.ex_application_bureau.Controller to javafx.fxml;
     opens org.example.ex_application_bureau.View to javafx.fxml;
