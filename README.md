@@ -1,7 +1,7 @@
 # PasswordManager_JavaFX
 
 <div style="text-align:center;">
-    <p align="center">Creating a Password Manager with JavaFX</p>
+    <p align="center">Creating a Password Manager with JavaFX and MariaDB for database</p>
     <p align="center">overview of the different windows of the application</p>
 </div>
 
