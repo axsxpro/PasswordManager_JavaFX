@@ -8,7 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import org.example.ex_application_bureau.Model.*;
-import org.mindrot.jbcrypt.BCrypt;
+
 
 import java.sql.SQLException;
 

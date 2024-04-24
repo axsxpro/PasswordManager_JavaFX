@@ -14,8 +14,6 @@ import org.example.ex_application_bureau.Model.DAOFactory;
 import org.example.ex_application_bureau.Model.PasswordManager;
 import org.example.ex_application_bureau.Model.PasswordManagerDAO;
 
-
-
 import java.sql.SQLException;
 
 
