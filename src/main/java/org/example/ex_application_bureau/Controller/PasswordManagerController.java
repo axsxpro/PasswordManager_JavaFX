@@ -113,6 +113,8 @@ public class PasswordManagerController {
         passwordField_pm.setVisible(false);
         save_button.setVisible(false);
         cancel_button.setVisible(false);
+        img_eyeOpen.setVisible(true);
+        img_eyeClosed.setVisible(false);
 
     }
 
@@ -263,6 +265,8 @@ public class PasswordManagerController {
         username_pm.setVisible(false);
         password_pm.setVisible(false);
         urlText_pm.setVisible(false);
+        img_eyeOpen.setVisible(false);
+        img_eyeClosed.setVisible(false);
 
     }
 
@@ -301,6 +305,7 @@ public class PasswordManagerController {
         img_eyeOpen.setVisible(false);
         img_eyeClosed.setVisible(true);
 
+
         //récupérer le mot de passe de l'objet PasswordManager
         String encryptedPassword = currentIdentifier.getPassword();
 
@@ -314,11 +319,13 @@ public class PasswordManagerController {
         // Afficher le mot de passe décrypté
         passwordText_pm.setText(decryptedPassword);
 
+
     }
 
 
     @FXML
     public void hidePassword(MouseEvent event) {
+
         img_eyeOpen.setVisible(true);
         img_eyeClosed.setVisible(false);
 
