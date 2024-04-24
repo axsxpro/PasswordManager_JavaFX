@@ -2,7 +2,7 @@
 
 <div style="text-align:center;">
     <p align="center">Creating a Password Manager with JavaFX</p>
-    <p align="center">app overview</p>
+    <p align="center">overview of the different windows of the application</p>
 </div>
 
 <hr>
@@ -16,6 +16,11 @@
 <hr>
 
 <img src="https://github.com/axsxpro/PasswordManager_JavaFX/assets/117820036/b2285b21-76b8-4558-bf70-75f7c9e98e90">
+
+
+<hr>
+
+<img src="https://github.com/axsxpro/PasswordManager_JavaFX/assets/117820036/5b90c400-ba43-48e8-9529-2253ffa59ee7" width="60%">
 
 <hr>
 
