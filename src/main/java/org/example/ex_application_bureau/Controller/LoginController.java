@@ -18,6 +18,10 @@ import java.util.List;
 import java.util.Map;
 
 import javafx.stage.Stage;
+import org.example.ex_application_bureau.Model.dao.PasswordManagerDAO;
+import org.example.ex_application_bureau.Model.dao.UserDAO;
+import org.example.ex_application_bureau.Model.entity.PasswordManager;
+import org.example.ex_application_bureau.Model.entity.User;
 import org.mindrot.jbcrypt.BCrypt;
 
 

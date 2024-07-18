@@ -1,6 +1,7 @@
 package org.example.ex_application_bureau.Model;
 
-import org.example.ex_application_bureau.Util.Database;
+
+import org.example.ex_application_bureau.Model.entity.User;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -18,7 +19,7 @@ public class StoredProcedure {
     }
 
 
-    // methode procédure stocké pour rechercher toute la liste d'une table
+    // methode procédure stockée pour rechercher toute la liste d'une table
     public ResultSet procedureFindAll(String callProcedureSQL) throws SQLException {
 
         CallableStatement callableStatement = connection.prepareCall(callProcedureSQL);
@@ -104,7 +105,7 @@ public class StoredProcedure {
     }
 
 
-    // methode procédure stockée pour rechercher le dernier indentifiant d'une table
+    // methode procédure stockée pour rechercher le dernier identifiant d'une table
     public ResultSet procedureGetLastId(String callProcedureSQL) throws SQLException {
 
         CallableStatement callableStatement = connection.prepareCall(callProcedureSQL);

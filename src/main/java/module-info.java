@@ -14,5 +14,7 @@ module org.example.ex_application_bureau {
     exports org.example.ex_application_bureau;
     exports org.example.ex_application_bureau.Controller;
     opens org.example.ex_application_bureau.Model to javafx.base;
+    opens org.example.ex_application_bureau.Model.entity to javafx.base;
+    opens org.example.ex_application_bureau.Model.dao to javafx.base;
 
 }

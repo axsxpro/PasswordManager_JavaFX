@@ -1,4 +1,10 @@
-package org.example.ex_application_bureau.Model;
+package org.example.ex_application_bureau.Model.dao;
+
+import org.example.ex_application_bureau.Model.DAOFactory;
+import org.example.ex_application_bureau.Model.GenericDAO;
+import org.example.ex_application_bureau.Model.StoredProcedure;
+import org.example.ex_application_bureau.Model.entity.PasswordManager;
+import org.example.ex_application_bureau.Model.entity.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -7,7 +13,7 @@ import java.util.Map;
 
 public class PasswordManagerDAO implements GenericDAO<PasswordManager> {
 
-    private StoredProcedure StoredProcedure;
+    private org.example.ex_application_bureau.Model.StoredProcedure StoredProcedure;
     private Map<Integer, PasswordManager> arrayIdentifiant = new HashMap<>();
 
     private Map<Integer, PasswordManager> arrayIdentifiantByidUser = new HashMap<>();

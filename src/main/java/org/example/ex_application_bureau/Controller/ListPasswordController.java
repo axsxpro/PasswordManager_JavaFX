@@ -15,8 +15,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-import org.example.ex_application_bureau.Model.PasswordManager;
-import org.example.ex_application_bureau.Model.User;
+import org.example.ex_application_bureau.Model.entity.PasswordManager;
+import org.example.ex_application_bureau.Model.entity.User;
 
 import java.io.IOException;
 import java.net.URL;

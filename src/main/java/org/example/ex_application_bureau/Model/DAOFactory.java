@@ -1,5 +1,9 @@
 package org.example.ex_application_bureau.Model;
 
+import org.example.ex_application_bureau.Model.dao.PasswordManagerDAO;
+import org.example.ex_application_bureau.Model.dao.UserDAO;
+import org.example.ex_application_bureau.Model.entity.PasswordManager;
+import org.example.ex_application_bureau.Model.entity.User;
 import org.example.ex_application_bureau.Util.Database;
 
 import java.sql.SQLException;

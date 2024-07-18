@@ -1,5 +1,4 @@
-package org.example.ex_application_bureau.Model;
-
+package org.example.ex_application_bureau.Model.entity;
 
 public class User {
 

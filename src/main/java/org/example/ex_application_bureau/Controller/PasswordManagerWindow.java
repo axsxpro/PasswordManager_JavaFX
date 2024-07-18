@@ -5,7 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.example.ex_application_bureau.Model.PasswordManager;
+import org.example.ex_application_bureau.Model.entity.PasswordManager;
 
 
 public class PasswordManagerWindow {

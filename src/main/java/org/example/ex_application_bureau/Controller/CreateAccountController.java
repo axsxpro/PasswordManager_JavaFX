@@ -8,6 +8,8 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import org.example.ex_application_bureau.Main;
 import org.example.ex_application_bureau.Model.*;
+import org.example.ex_application_bureau.Model.dao.UserDAO;
+import org.example.ex_application_bureau.Model.entity.User;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;

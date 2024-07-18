@@ -11,8 +11,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import org.example.ex_application_bureau.Model.DAOFactory;
-import org.example.ex_application_bureau.Model.PasswordManager;
-import org.example.ex_application_bureau.Model.PasswordManagerDAO;
+import org.example.ex_application_bureau.Model.entity.PasswordManager;
+import org.example.ex_application_bureau.Model.dao.PasswordManagerDAO;
 
 import java.sql.SQLException;
 
